@@ -21,7 +21,7 @@ library(readr)
 
 memory.size() ### Checking your memory size
 memory.limit() ## Checking the set limit
-memory.limit(size=56000)
+memory.limit(size=560000)
 
 
 # get all files with the .shp extension from working directory
