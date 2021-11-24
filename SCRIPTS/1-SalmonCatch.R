@@ -72,6 +72,17 @@ str(df3)
 ggplot(df3, aes(fill=LICENCE_AREA2, y=Freq, x=CALENDAR_YEAR)) + 
   geom_bar(position="stack", stat="identity")
 
+ggplot(df3, aes(fill=LICENCE_AREA2, y=Freq, x=CALENDAR_YEAR)) + 
+  geom_line(position="stack", stat="identity")+geom_area()+geom_density(alpha = 0.1)
+
+ggplot(df3, aes(CALENDAR_YEAR, fill = LICENCE_AREA2, colour = CALENDAR_YEAR)) +
+  geom_density(alpha = 0.1)
+
+df3%>%
+lines3D(x=df3$CALENDAR_YEAR, y=df3$LICENCE_AREA2 , z=df3$Freq)
+
+scatter3D(df3$CALENDAR_YEAR, df3$Freq, df3$LICENCE_AREA2, bty = "g", type = "l", 
+          ticktype = "detailed", lwd = 4)
 
 ggplot(df3, aes(CALENDAR_YEAR, Freq, height = Freq, group = LICENCE_AREA2), fill = (LICENCE_AREA2)) +
   geom_ridgeline_gradient(scale = 3, rel_min_height = 0.01) +
@@ -88,7 +99,13 @@ fig.us <- plot_ly(df3, x = ~Year , y = ~Freq, z = ~Area,
                   mode = 'lines', color=~Area)
 fig.us
 
-fig <- plot_ly(df3, x = ~LICENCE_AREA2, y = ~y, z = ~cut, type = 'scatter3d', mode = 'lines', color = ~cut)
+fig <- plot_ly(df3, x = ~LICENCE_AREA2, y = ~Freq, z = ~cut, type = 'scatter3d', mode = 'lines', color = ~cut)
+
+fig <- plot_ly(data, x = ~x, y = ~y, z = ~cut, type = 'scatter3d', mode = 'lines', color = ~cut)
+
+fig
+
+
 
 ggplot(df3, aes(x = CALENDAR_YEAR, y = LICENCE_AREA2, group = LICENCE_AREA2)) +
   geom_density_ridges(scale = 10, size = 0.25, rel_min_height = 0.03) +
@@ -108,8 +125,12 @@ ggplot(df3, aes(CALENDAR_YEAR, LICENCE_AREA2, height = Freq, group = LICENCE_ARE
   geom_ridgeline_gradient() +
   scale_fill_viridis_d(direction = -1, guide = "none")
 
-p2 <- ggplot(data=df3, aes(x=Year, group=Area, fill=Area)) +
-  geom_density(adjust=1.5, alpha=.4) +
+p2 <- ggplot(data=df3, aes(x=CALENDAR_YEAR, y=Freq,group=LICENCE_AREA2, fill=LICENCE_AREA2)) +
+  geom_line(stat="identity"), geom_density(adjust=1.5, alpha=.4) 
+
++
   theme_ipsum()
 p2
 
+
+stat = "identity",
