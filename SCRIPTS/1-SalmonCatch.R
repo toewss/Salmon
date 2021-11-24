@@ -19,6 +19,14 @@ suppressMessages(library(renv))
 library(readr)
 library(ggridges)
 library(plot3D)
+library(ggrgl)
+library(tidyverse)
+library(ggrepel)
+library(ggtext)
+library(showtext)
+font_add_google("Lato")
+showtext_auto()
+
 # Libraries
 
 library(hrbrthemes)
@@ -72,11 +80,81 @@ str(df3)
 ggplot(df3, aes(fill=LICENCE_AREA2, y=Freq, x=CALENDAR_YEAR)) + 
   geom_bar(position="stack", stat="identity")
 
-ggplot(df3, aes(fill=LICENCE_AREA2, y=Freq, x=CALENDAR_YEAR)) + 
-  geom_line(position="stack", stat="identity")+geom_area()+geom_density(alpha = 0.1)
+ggplot(df3) + 
+  geom_line_3d(aes(x=CALENDAR_YEAR, fill =LICENCE_AREA2), position="stack", z=200,extrude=TRUE,colour='black')
 
-ggplot(df3, aes(CALENDAR_YEAR, fill = LICENCE_AREA2, colour = CALENDAR_YEAR)) +
-  geom_density(alpha = 0.1)
+pp <- streamgraph(data, key="name", value="value", date="year", height="300px", width="1000px") %>%
+  sg_legend(show=TRUE, label="names: ")
+
+plt <- ggplot(
+  # The ggplot object has associated the data for the highlighted countries
+  df3, 
+  aes(CALENDAR_YEAR, Freq, group = LICENCE_AREA2)
+) + 
+  # Geometric annotations that play the role of grid lines
+  geom_vline(
+    xintercept = seq(1996, 2020, by = 5),
+    color = "grey91", 
+    size = .6
+  ) +
+  geom_segment(
+    data = tibble(y = seq(-4, 3, by = 1), x1 = 1996, x2 = 2020),
+    aes(x = x1, xend = x2, y = y, yend = y),
+    inherit.aes = FALSE,
+    color = "grey91",
+    size = .6
+  ) +
+  geom_segment(
+    data = tibble(y = 0, x1 = 1996, x2 = 2020),
+    aes(x = x1, xend = x2, y = y, yend = y),
+    inherit.aes = FALSE,
+    color = "grey60",
+    size = .8
+  ) +
+  
+  
+  ## Lines for the highlighted countries.
+  # It's important to put them after the grey lines
+  # so the colored ones are on top
+  geom_line(
+    aes(color = LICENCE_AREA2),
+    size = .9
+  )
+plt
+
+plt <- plt + 
+   geom_text_repel(
+    aes(color = LICENCE_AREA2, label = LICENCE_AREA2),
+    family = "Lato",
+    fontface = "bold",
+    size = 8,
+    direction = "y",
+    xlim = c(2020.8, NA),
+    hjust = 0,
+    segment.size = .7,
+    segment.alpha = .5,
+    segment.linetype = "dotted",
+    box.padding = .4,
+    segment.curvature = -0.1,
+    segment.ncp = 3,
+    segment.angle = 20
+  ) +
+  ## coordinate system + scales
+  coord_cartesian(
+    clip = "off",
+    ylim = c(-4, 3)
+  ) +
+  scale_x_continuous(
+    expand = c(0, 0),
+    limits = c(2000, 2023.5), 
+    breaks = seq(2000, 2020, by = 5)
+  ) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    breaks = seq(-4, 3, by = 1),
+    labels = glue::glue("{format(seq(-4, 3, by = 1), nsmall = 2)}$")
+  )
+plt 
 
 df3%>%
 lines3D(x=df3$CALENDAR_YEAR, y=df3$LICENCE_AREA2 , z=df3$Freq)
