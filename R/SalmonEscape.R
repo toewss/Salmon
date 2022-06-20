@@ -55,6 +55,7 @@ str(ter)
 ter$Stock<-as.factor(ter$Stock)
 ter$StockNum<-as.factor(ter$StockNum)
 ter$Year<-ymd(ter$Year, truncated =2L)
+ter$Age<-as.factor(ter$Age)
 
 
 #---Read in catch statistics----
@@ -67,41 +68,48 @@ catch$Fishery<-as.factor(catch$Fishery)
 #----Combine abnundance data by group and year----
 
 ter<-ter %>%
-  mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG_SP',
-                        Stock == 'FSS' | Stock == 'FSO' ~ 'FRG_SU',
-                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRG_FA',
-                        Stock == 'MGS'  ~ 'GST_NO',
-                        Stock == 'LGS' ~ 'GST_LO',
-                        Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL' ~ 'PSD_FA',
-                        Stock == 'NKS'  ~ 'PSD_SP',
-                        Stock == 'WVN' | Stock == 'WVH' ~ 'WCV_FA',
-                        Stock == 'NOC'  ~ 'CAO_FA',
-                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRG_FA',
-                        Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'COR_FA',
-                        Stock == 'CWS' | Stock == 'WSH' ~ 'COR_SP'))
+  mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG SP',
+                        Stock == 'FSS' | Stock == 'FSO' ~ 'FRG SU',
+                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
+                        Stock == 'MGS'  ~ 'GST NO',
+                        Stock == 'LGS' ~ 'GST LO',
+                        Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL' ~ 'PSD FA',
+                        Stock == 'NKS'  ~ 'PSD SP',
+                        Stock == 'WVN' | Stock == 'WVH' ~ 'WCV FA',
+                        Stock == 'NOC'  ~ 'CAO FA',
+                        Stock == 'WCN' | Stock == 'WCH' ~ 'WAC FA',
+                        Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'COR FA',
+                        Stock == 'SUM'  ~ 'COR SU',
+                        Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
 ter$FG<-as.factor((ter$FG))
+ter$FG2 < - factor(ter$FG, levels=c("FRG SP", "PSD SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
+
+
+
 str(ter)
+summary(ter$FG)
 plot(ter$Terminal.Run ~ ter$Stock+ter$Year)
 
 ter2<-ter %>%
-  group_by(FG) %>%
-  summarise_all(funs(paste(na.omit(.), collapse = ",")))
+  group_by(Stock,Year,Age) %>%
+  summarise(Terminal = sum(Terminal.Run))
 
 ter2<-ter %>%
   group_by(FG,Year,Age) %>%
   summarise(Terminal = sum(Terminal.Run))
 
 
+str(ter2)
+# Stacked
 
-ggplot(data =ter2)+
-   aes(x = Year, y = Terminal, group = FG)+
-  geom_line(scale = 10, size = 0.25, rel_min_height = 0.03) +
-  theme_ridges() +
-  scale_x_continuous(limits = c(1, 200), expand = c(0, 0))# +
-  scale_y_reverse(
-    breaks = c(2000, 1980, 1960, 1940, 1920, 1900),
-    expand = c(0, 0)
-  )
-df3<-df2 %>%
-  group_by(CALENDAR_YEAR, LICENCE_AREA2) %>%
-  summarise(Freq = sum(TotCHINOOK))
+ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) + 
+  geom_bar(position="stack", stat="identity")+
+  scale_fill_viridis(discrete = T, option = "E") +
+  ggtitle("Chinook Terminal Runs") +
+  facet_wrap(~Stock) #+
+  theme_ipsum() +
+  theme(legend.position="none") +
+  xlab("")
+
+
+
