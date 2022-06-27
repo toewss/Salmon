@@ -86,9 +86,9 @@ str(ter2)
 summary(ter2$FG)
 plot(ter$Terminal.Run ~ ter$Stock+ter$Year)
 
-ter2<-ter %>%
-  group_by(Stock,Year,Age) %>%
-  summarise(Terminal = sum(Terminal.Run))
+#ter2<-ter %>%
+#  group_by(Stock,Year,Age) %>%
+#  summarise(Terminal = sum(Terminal.Run))
 
 ter2<-ter2 %>%
   group_by(FG,Year,Age) %>%
@@ -116,6 +116,7 @@ Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) +
   catch$Fishery<-as.factor(catch$Fishery)
   catch$Year<-ymd(catch$Year, truncated =2L)
   catch$Age<-as.factor(catch$Age)
+  catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
   
   
 
@@ -142,21 +143,21 @@ Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) +
   
   str(catch2)
   summary(catch2$FG)
-  plot(catch2$Catch ~ catch2$Stock+catch2$Year)
+  #plot(catch2$Total ~ catch2$Stock+catch2$Year)
   
   catch2<-catch2 %>%
     group_by(Fishery,FG,Year,Age) %>%
-    summarise(Catch = sum(Catch))
+    summarise(Total = sum(Total))
   
-#  catch2<-catch2 %>%
-#    group_by(FG,Year,Age) %>%
-#    summarise(Catch = sum(Catch))
+ catch2<-catch2 %>%
+    group_by(FG,Year,Age) %>%
+    summarise(Total = sum(Total))
 
-Cat<-  ggplot(catch2, aes(fill=FG, y=Catch, x=Year)) + 
+Cat<-  ggplot(catch2, aes(fill=Age, y=Total, x=Year)) + 
     geom_bar(position="stack", stat="identity")+
     scale_fill_viridis(discrete = T, option = "E") +
-    ggtitle("Chinook Total Catch") +
-  facet_wrap(~Fishery) #+
+    ggtitle("Chinook Total Catch") #+
+  facet_wrap(~FG) #+
   theme_ipsum() +
     theme(legend.position="none") +
     xlab("")  
@@ -170,12 +171,12 @@ ter2
 
 df<- full_join(ter2, catch2, by = 'ID')
 df
-df$Abund<-df$Terminal+df$Catch
+df$Abund<-df$Terminal+df$Total
 
 abund<- ggplot(df, aes(fill=Age.x, y=Abund, x=Year.x)) + 
-  geom_bar(position="dodge", stat="identity")+
+  geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
-  ggtitle("Chinook Abunance") +
+  ggtitle("Chinook Abunance")# +
   facet_wrap(~FG.x) #+
 theme_ipsum() +
   theme(legend.position="none") +
@@ -186,3 +187,9 @@ ggarrange(Term,Cat,abund,                                       # First row with
           ncol = 1, labels = c("A","B", "C"), # Second row with box and dot plots
           nrow = 3) 
   
+
+AGE<-df%>%filter(Year.x,Age.x,FG.x)
+  
+  table(df$Year.x,df$Age.x,df$FG.x)
+ write_rds(df,"Data/ChinookAbundance.rds")
+write_csv(df,"Data/ChinookAbundance.csv") 
