@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 # History files
+=======
+>>>>>>> 49e157018c63a66b88bbb7dc9f2fcd68d1ee7267
 .Rhistory
 .Rapp.history
 # Session Data files
@@ -26,6 +29,14 @@ vignettes/*.pdf
 *.knit.md
 # R Environment Variables
 .Renviron
+<<<<<<< HEAD
 # ignore all files in any directory named Data and 
 Data/
 licenses/
+=======
+# ignore all files in the following directories
+intermediate/*
+outputs/*
+licenses/*
+data/*
+
