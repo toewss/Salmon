@@ -101,8 +101,8 @@ str(ter2)
 Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
-  ggtitle("Chinook Terminal Runs")# +
-  facet_wrap(~Age) #+
+  ggtitle("Chinook Terminal Runs") +
+  facet_wrap(~FG,scales = "free_y") #+
   theme_ipsum() +
   theme(legend.position="none") +
   xlab("")
@@ -145,9 +145,9 @@ Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) +
   summary(catch2$FG)
   #plot(catch2$Total ~ catch2$Stock+catch2$Year)
   
-  catch2<-catch2 %>%
-    group_by(Fishery,FG,Year,Age) %>%
-    summarise(Total = sum(Total))
+ # catch2<-catch2 %>%
+#    group_by(Fishery,FG,Year,Age) %>%
+#    summarise(Total = sum(Total))
   
  catch2<-catch2 %>%
     group_by(FG,Year,Age) %>%
@@ -156,8 +156,8 @@ Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) +
 Cat<-  ggplot(catch2, aes(fill=Age, y=Total, x=Year)) + 
     geom_bar(position="stack", stat="identity")+
     scale_fill_viridis(discrete = T, option = "E") +
-    ggtitle("Chinook Total Catch") #+
-  facet_wrap(~FG) #+
+    ggtitle("Chinook Total Catch") +
+  facet_wrap(~FG,scales="free_y") #+
   theme_ipsum() +
     theme(legend.position="none") +
     xlab("")  
@@ -172,12 +172,13 @@ ter2
 df<- full_join(ter2, catch2, by = 'ID')
 df
 df$Abund<-df$Terminal+df$Total
+df$catratio<-df$Total/df$Abund
 
-abund<- ggplot(df, aes(fill=Age.x, y=Abund, x=Year.x)) + 
+abund<- ggplot(df, aes( y=catratio, x=Year.x)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
-  ggtitle("Chinook Abunance")# +
-  facet_wrap(~FG.x) #+
+  ggtitle("Chinook Abunance") +
+  facet_wrap(~Age.x, scales="free_y") #+
 theme_ipsum() +
   theme(legend.position="none") +
   xlab("")
