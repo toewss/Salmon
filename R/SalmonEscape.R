@@ -12,7 +12,6 @@
 
 rm(list = ls(all=TRUE)) ; ls()
 
-
 #----Install required packages----
 
 suppressMessages(library(dplyr))
@@ -57,9 +56,6 @@ ter$StockNum<-as.factor(ter$StockNum)
 ter$Year<-ymd(ter$Year, truncated =2L)
 ter$Age<-as.factor(ter$Age)
 
-
-
-
 #----Combine abnundance data by group and year----
 str(ter)
 ter2<-ter %>%
@@ -102,7 +98,7 @@ Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Terminal Runs") +
-  facet_wrap(~Stock,scales="free_y") #+
+  facet_wrap(~FG,scales="free_y") #+
   theme_ipsum() +
   theme(legend.position="none") +
   xlab("")
@@ -110,7 +106,7 @@ Term
 ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "cm")
 
 
-  #---Read in catch statistics----
+#---Read in catch statistics----
   catch<-read_csv("Data/2021_07_catch_mortality_couture_v3.csv")
   spec(catch)
   str(catch)
@@ -125,7 +121,17 @@ ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "
                               !catch$Fishery == 'TPS FS',])
   
   str(datf)
+  c<-table(catch$Fishery)#,catch$Age,df$FG.x)
+  c<-as.data.frame(c)
+  write_csv(c,"Data/Fisheries.csv") 
   
+  #----Remove Fisheries Outside of SRKW Summer Zone----
+  
+ catch<-subset(catch, Name!="George" & Name!="Andrea")
+  selected<-c("WCVI T","WCVI N","WCVI ISBM S","WCVI AABM S",
+              "GEO ST S", "GEO ST T","J DE F N","PGSDN N",
+              "PGSDN S","PGSDO N", "PGSDO S") 
+  catch<-catch[catch$Fishery %in% selected,]
 
   #----Combine catch data by group and year----
   str(catch)
@@ -150,32 +156,38 @@ ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "
   
   str(catch2)
   summary(catch2$FG)
-  #plot(catch2$Total ~ catch2$Stock+catch2$Year)
+
   
-  catch2<-catch2 %>%
+ catch2<-catch2 %>%
     group_by(Stock,Year,Age) %>%
     summarise(Total = sum(Total))
   
  catch2<-catch2 %>%
-    group_by(FG,Year,Age) %>%
+    group_by(FG, Year,Age) %>%
     summarise(Total = sum(Total))
 
 Cat<-  ggplot(catch2, aes(fill=Age, y=Total, x=Year)) + 
     geom_bar(position="stack", stat="identity")+
     scale_fill_viridis(discrete = T, option = "E") +
     ggtitle("Chinook Total Catch") +
-  facet_wrap(~FG,scales="free_y") #+
+  facet_wrap(~Fishery ,scales="free_y") #+
   theme_ipsum() +
     theme(legend.position="none") +
     xlab("")  
  
-Cat   
+Cat  
+
+
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
+
+
+
+
 #----Create ID index for both dataframes----  
 catch2 <- cbind(ID = 1:nrow(catch2), catch2)    # Applying cbind function
-catch2                                      # Printing updated data
+catch2$Type<-c("Fishery")                                      # Printing updated data
 ter2 <- cbind(ID = 1:nrow(ter2), ter2)    # Applying cbind function
-ter2  
+ter2$Type<-c("Terminal")  
 
 df<- full_join(ter2, catch2, by = 'ID')
 df
@@ -186,10 +198,11 @@ abund<- ggplot(df, aes(fill=Age.x, y=Abund, x=Year.x)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Abunance") +
-  facet_wrap(~Stock.x, scales="free_y") #+
+  facet_wrap(~FG.x, scales="free_y") #+
 theme_ipsum() +
   theme(legend.position="none") +
   xlab("")
+
 abund
 
 ggarrange(Term,Cat,abund,                                       # First row with scatter plot
