@@ -45,22 +45,16 @@ ter$Age<-as.factor(ter$Age)
 #----Combine abnundance data by group and year----
 str(ter)
 ter2<-ter %>%
-  mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRGSPS SP',
+  mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3'|Stock == 'NKS' ~ 'FRGSPS SP',
                         Stock == 'FSS' | Stock == 'FSO' ~ 'FRGSPS SU',
-                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
-                        Stock == 'MGS'  ~ 'GST NO',
-                        Stock == 'LGS' ~ 'GST LO',
-                        Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL' ~ 'PSD FA',
-                        Stock == 'NKS'  ~ 'PSD SP',
-                        Stock == 'WVN' | Stock == 'WVH' ~ 'WCV FA',
-                        Stock == 'NOC'  ~ 'CAO FA',
-                        Stock == 'WCN' | Stock == 'WCH' ~ 'WAC FA',
-                        Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'COR FA',
-                        Stock == 'SUM'  ~ 'COR SU',
-                        Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
+                        Stock == 'FCF' | Stock == 'FHF'| Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'MGS'|Stock == 'LGS' ~ 'FRGSPS FA',
+                        Stock == 'WVN' | Stock == 'WVH' ~ 'WCVI FA',
+                        Stock == 'NOC' |Stock == 'WCN' | Stock == 'WCH'|Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'CRWOC FA',
+                        Stock == 'SUM'  ~ 'CRWOC  SU',
+                        Stock == 'CWS' | Stock == 'WSH' ~ 'CRWOC  SP'))
 str(ter2)
 ter2$FG<-as.factor((ter2$FG))
-ter2$FG <-factor(ter2$FG, levels=c("FRG SP", "PSD SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
+ter2$FG <-factor(ter2$FG, levels=c('FRGSPS SP', 'FRGSPS SU', 'FRGSPS FA','WCVI FA','CRWOC  SP','CRWOC  SU','CRWOC FA' ))
 str(ter2)
 
 
@@ -101,10 +95,10 @@ catch$Fishery<-as.factor(catch$Fishery)
 catch$Year<-ymd(catch$Year, truncated =2L)
 catch$Age<-as.factor(catch$Age)
 catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
-catch <- droplevels(catch[!catch$Fishery == 'TSF FS'&!catch$Fishery == 'TCENTRAL FS' & 
-                            !catch$Fishery == 'TNORTH'&!catch$Fishery == 'TWCVI FS'&
-                            !catch$Fishery == 'TFRASER FS'&!catch$Fishery == 'TGS FS'&
-                            !catch$Fishery == 'TPS FS',])
+#catch <- droplevels(catch[!catch$Fishery == 'TSF FS'&!catch$Fishery == 'TCENTRAL FS' & 
+#                            !catch$Fishery == 'TNORTH'&!catch$Fishery == 'TWCVI FS'&
+#                            !catch$Fishery == 'TFRASER FS'&!catch$Fishery == 'TGS FS'&
+#                            !catch$Fishery == 'TPS FS',])
 
 str(datf)
 c<-table(catch$Fishery)#,catch$Age,df$FG.x)
@@ -114,39 +108,31 @@ write_csv(c,"Data/Fisheries.csv")
 #----Remove Fisheries Outside of SRKW Summer Zone----
 
 catch<-subset(catch, Name!="George" & Name!="Andrea")
-selected<-c("WCVI T","WCVI N","WCVI ISBM S","WCVI AABM S",
-            "GEO ST S", "GEO ST T","J DE F N","PGSDN N",
-            "PGSDN S","PGSDO N", "PGSDO S") 
+selected<-c("TGS FS","TPS FS","TGEO ST FN","TSF FS","TFRAS FN","TPS FN","TWAC FN","TWCVI FS","TFRASER FS","TCOL R N") 
 catch<-catch[catch$Fishery %in% selected,]
 
 #----Combine catch data by group and year----
 str(catch)
 catch2<-catch %>%
-  mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG SP',
-                        Stock == 'FSS' | Stock == 'FSO' ~ 'FRG SU',
-                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
-                        Stock == 'MGS'  ~ 'GST NO',
-                        Stock == 'LGS' ~ 'GST LO',
-                        Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL' ~ 'PSD FA',
-                        Stock == 'NKS'  ~ 'PSD SP',
-                        Stock == 'WVN' | Stock == 'WVH' ~ 'WCV FA',
-                        Stock == 'NOC'  ~ 'CAO FA',
-                        Stock == 'WCN' | Stock == 'WCH' ~ 'WAC FA',
-                        Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'COR FA',
-                        Stock == 'SUM'  ~ 'COR SU',
-                        Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
+  mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3'|Stock == 'NKS' ~ 'FRGSPS SP',
+                        Stock == 'FSS' | Stock == 'FSO' ~ 'FRGSPS SU',
+                        Stock == 'FCF' | Stock == 'FHF'| Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'MGS'|Stock == 'LGS' ~ 'FRGSPS FA',
+                        Stock == 'WVN' | Stock == 'WVH' ~ 'WCVI FA',
+                        Stock == 'NOC' |Stock == 'WCN' | Stock == 'WCH'|Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'CRWOC FA',
+                        Stock == 'SUM'  ~ 'CRWOC  SU',
+                        Stock == 'CWS' | Stock == 'WSH' ~ 'CRWOC  SP'))
 str(catch2)
 catch2$FG<-as.factor((catch2$FG))
-catch2$FG <-factor(catch2$FG, levels=c("FRG SP", "PSD SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
+catch2$FG <-factor(catch2$FG, levels=c('FRGSPS SP', 'FRGSPS SU', 'FRGSPS FA','WCVI FA','CRWOC  SP','CRWOC  SU','CRWOC FA' ))
 str(catch2)
 
 str(catch2)
 summary(catch2$FG)
 
 
-catch2<-catch2 %>%
-  group_by(Stock,Year,Age) %>%
-  summarise(Total = sum(Total))
+#catch2<-catch2 %>%
+#  group_by(Stock,Year,Age) %>%
+#  summarise(Total = sum(Total))
 
 catch2<-catch2 %>%
   group_by(FG, Year,Age) %>%
