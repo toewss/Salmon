@@ -80,11 +80,11 @@ str(ter2)
 
 str(ter2)
 summary(ter2$FG)
-plot(ter$Terminal.Run ~ ter$Stock+ter$Year)
+#plot(ter$Terminal.Run ~ ter$Stock+ter$Year)
 
-ter2<-ter %>%
-  group_by(Stock,Year,Age) %>%
-  summarise(Terminal = sum(Terminal.Run))
+#ter2<-ter %>%
+#  group_by(Stock,Year,Age) %>%
+#  summarise(Terminal = sum(Terminal.Run))
 
 ter2<-ter2 %>%
   group_by(FG,Year,Age) %>%
@@ -99,9 +99,9 @@ Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) +
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Terminal Runs") +
   facet_wrap(~FG,scales="free_y") #+
-theme_ipsum() +
-  theme(legend.position="none") +
-  xlab("")
+#theme_ipsum() +
+#  theme(legend.position="none") +
+#  xlab("")
 Term
 ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "cm")
 

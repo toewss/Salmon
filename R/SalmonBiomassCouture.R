@@ -47,7 +47,7 @@ str(ter)
 ter2<-ter %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRGSPS SP',
                         Stock == 'FSS' | Stock == 'FSO' ~ 'FRGSPS SU',
-                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRGSPS FA',
+                        Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
                         Stock == 'MGS'  ~ 'GST NO',
                         Stock == 'LGS' ~ 'GST LO',
                         Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL' ~ 'PSD FA',
