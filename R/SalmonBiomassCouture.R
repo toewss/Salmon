@@ -67,7 +67,7 @@ summary(ter2$FG)
 #  summarise(Terminal = sum(Terminal.Run))
 
 ter2<-ter2 %>%
-  group_by(FG,Year,Age) %>%
+  group_by(FG,Year)%>%#,Age) %>%
   summarise(Terminal = sum(Terminal.Run))
 
 
@@ -100,17 +100,22 @@ catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
 #                            !catch$Fishery == 'TFRASER FS'&!catch$Fishery == 'TGS FS'&
 #                            !catch$Fishery == 'TPS FS',])
 
-str(datf)
-c<-table(catch$Fishery)#,catch$Age,df$FG.x)
-c<-as.data.frame(c)
-write_csv(c,"Data/Fisheries.csv") 
+str(catch)
+#c<-table(catch$Fishery)#,catch$Age,df$FG.x)
+#c<-as.data.frame(c)
+#write_csv(c,"Data/Fisheries.csv") 
 
 #----Remove Fisheries Outside of SRKW Summer Zone----
-
+#"TCENTRAL FN","TYK YAK FN", "TCOL R S","TNORTH FS","TCENTRAL FS",
 catch<-subset(catch, Name!="George" & Name!="Andrea")
-selected<-c("TGS FS","TPS FS","TGEO ST FN","TSF FS","TFRAS FN","TPS FN","TWAC FN","TWCVI FS","TFRASER FS","TCOL R N") 
+selected<-c("NORTH T","NORTH N","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
+            "WCVI N","WCVI ISBM S","WCVI AABM S","WASH CST N","JNST N","FRASER N","CBC S","NBC AABM S","NBC ISBM S","WCVI AABM S","N FALCON S","S FALCON S",
+            "GEO ST S", "GEO ST T","J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
+selected<-c("NORTH T","NORTH N","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
+            "WCVI N","WCVI ISBM S","WCVI AABM S","WASH CST N","JNST N","FRASER N","CBC S","NBC AABM S","NBC ISBM S","WCVI AABM S","N FALCON S","S FALCON S",
+            "GEO ST S", "GEO ST T","J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
 catch<-catch[catch$Fishery %in% selected,]
-
+#"TGS FS","TPS FS","TGEO ST FN","TSF FS","TFRAS FN","TPS FN","TWAC FN","TWCVI FS","TFRASER FS","TCOL R N") 
 #----Combine catch data by group and year----
 str(catch)
 catch2<-catch %>%
@@ -135,21 +140,23 @@ summary(catch2$FG)
 #  summarise(Total = sum(Total))
 
 catch2<-catch2 %>%
-  group_by(FG, Year,Age) %>%
+  group_by(FG, Year,Fishery)%>%#,Age) %>%
   summarise(Total = sum(Total))
 
-Cat<-  ggplot(catch2, aes(fill=Age, y=Total, x=Year)) + 
+Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Total Catch") +
-  facet_wrap(~Fishery ,scales="free_y") #+
-theme_ipsum() +
-  theme(legend.position="none") +
-  xlab("")  
+  facet_wrap(~FG ,scales="free_y") #+
+#theme_ipsum() +
+#  theme(legend.position="none") +
+#  xlab("")  
 
 Cat  
-
-
+catch2
+print(catch2,n=24)
+c<-as.data.frame(catch2)
+write_csv(c,"OUTPUTS/Fisheries.csv") 
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
 
 
@@ -157,26 +164,30 @@ ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units =
 
 #----Create ID index for both dataframes----  
 catch2 <- cbind(ID = 1:nrow(catch2), catch2)    # Applying cbind function
-catch2$Type<-c("Fishery")                                      # Printing updated data
+#catch2$Type<-c("Fishery")                                      # Printing updated data
 ter2 <- cbind(ID = 1:nrow(ter2), ter2)    # Applying cbind function
-ter2$Type<-c("Terminal")  
+#ter2$Type<-c("Terminal")  
 
 df<- full_join(ter2, catch2, by = 'ID')
 df
 df$Abund<-df$Terminal+df$Total
+df$Biomass<-df$Abund*8.5
 df$catratio<-df$Total/df$Abund
+df
 
-abund<- ggplot(df, aes(fill=Age.x, y=Abund, x=Year.x)) + 
+abund<- ggplot(df, aes(y=Abund, x=Year.x)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Abunance") +
   facet_wrap(~FG.x, scales="free_y") #+
-theme_ipsum() +
-  theme(legend.position="none") +
-  xlab("")
-
+#theme_ipsum() +
+ # theme(legend.position="none") +
+#  xlab("")
 abund
 
+
+df2<-as.data.frame(df)
+print(df2)
 ggarrange(Term,Cat,abund,                                       # First row with scatter plot
           ncol = 1, labels = c("A","B", "C"), # Second row with box and dot plots
           nrow = 3) 
