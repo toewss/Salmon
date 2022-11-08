@@ -56,9 +56,6 @@ str(ter2)
 ter2$FG<-as.factor((ter2$FG))
 ter2$FG <-factor(ter2$FG, levels=c('FRGSPS SP', 'FRGSPS SU', 'FRGSPS FA','WCVI FA','CRWOC  SP','CRWOC  SU','CRWOC FA' ))
 str(ter2)
-
-
-str(ter2)
 summary(ter2$FG)
 #plot(ter$Terminal.Run ~ ter$Stock+ter$Year)
 
@@ -107,10 +104,20 @@ str(catch)
 
 #----Remove Fisheries Outside of SRKW Summer Zone----
 #"TCENTRAL FN","TYK YAK FN", "TCOL R S","TNORTH FS","TCENTRAL FS",
-catch<-subset(catch, Name!="George" & Name!="Andrea")
-selected<-c("NORTH T","NORTH N","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
-            "WCVI N","WCVI ISBM S","WCVI AABM S","WASH CST N","JNST N","FRASER N","CBC S","NBC AABM S","NBC ISBM S","WCVI AABM S","N FALCON S","S FALCON S",
-            "GEO ST S", "GEO ST T","J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
+#catch<-subset(catch, Name!="George" & Name!="Andrea")
+selected<-c("ALASKA T", "ALASKA N", "ALASKA S", "TAK YAK N","TAK TBR N","TBC TBR N","TBC TBR FN","TYK YAK FN","TAK TBR S",
+  
+            "TCENTRAL FN","TCOL R S","TNORTH FS","TCENTRAL FS","TCOL R N","TGEO ST FN","TFRAS FN","TPS FN","TWAC FN","NORTH T",
+            
+            "NORTH N","TWCVI FS","TFRASER FS","TGS FS","TPS FS","TSF FS","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
+            
+            "WCVI N","WCVI ISBM S","WASH CST N","JNST N","FRASER N","CBC S","NBC AABM S","NBC ISBM S","WCVI AABM S","N FALCON S",
+            
+            "S FALCON S","GEO ST S", "GEO ST T", "J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
+
+
+
+
 selected<-c("NORTH T","NORTH N","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
             "WCVI N","WCVI ISBM S","WCVI AABM S","WASH CST N","JNST N","FRASER N","CBC S","NBC AABM S","NBC ISBM S","WCVI AABM S","N FALCON S","S FALCON S",
             "GEO ST S", "GEO ST T","J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
@@ -140,7 +147,7 @@ summary(catch2$FG)
 #  summarise(Total = sum(Total))
 
 catch2<-catch2 %>%
-  group_by(FG, Year,Fishery)%>%#,Age) %>%
+  group_by(FG, Year)%>%#,Age) %>%
   summarise(Total = sum(Total))
 
 Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) + 
@@ -188,6 +195,7 @@ abund
 
 df2<-as.data.frame(df)
 print(df2)
+write_csv(df2,"OUTPUTS/Totals.csv") 
 ggarrange(Term,Cat,abund,                                       # First row with scatter plot
           ncol = 1, labels = c("A","B", "C"), # Second row with box and dot plots
           nrow = 3) 
