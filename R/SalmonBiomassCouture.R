@@ -67,6 +67,7 @@ ter2<-ter2 %>%
   group_by(FG,Year)%>%#,Age) %>%
   summarise(Terminal = sum(Terminal.Run))
 
+ter2
 
 str(ter2)
 # Stacked
@@ -105,7 +106,7 @@ str(catch)
 #----Remove Fisheries Outside of SRKW Summer Zone----
 #"TCENTRAL FN","TYK YAK FN", "TCOL R S","TNORTH FS","TCENTRAL FS",
 #catch<-subset(catch, Name!="George" & Name!="Andrea")
-selected<-c("ALASKA T", "ALASKA N", "ALASKA S", "TAK YAK N","TAK TBR N","TBC TBR N","TBC TBR FN","TYK YAK FN","TAK TBR S",
+selected<-c("ALASKA T", "ALASKA N", "ALASKA S", "TAK YAK N","TAK TBR N","TBC TBR FN","TYK YAK FN","TAK TBR S",
   
             "TCENTRAL FN","TCOL R S","TNORTH FS","TCENTRAL FS","TCOL R N","TGEO ST FN","TFRAS FN","TPS FN","TWAC FN","NORTH T",
             
@@ -147,7 +148,7 @@ summary(catch2$FG)
 #  summarise(Total = sum(Total))
 
 catch2<-catch2 %>%
-  group_by(FG, Year)%>%#,Age) %>%
+  group_by(FG, Year,Fishery)%>%#,Age) %>%
   summarise(Total = sum(Total))
 
 Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) + 
