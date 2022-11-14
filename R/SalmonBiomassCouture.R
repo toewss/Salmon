@@ -46,8 +46,8 @@ ter$Age<-as.factor(ter$Age)
 str(ter)
 ter2<-ter %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3'|Stock == 'NKS' ~ 'FRGSPS SP',
-                        Stock == 'FSS' | Stock == 'FSO' ~ 'FRGSPS SU',
-                        Stock == 'FCF' | Stock == 'FHF'| Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'MGS'|Stock == 'LGS' ~ 'FRGSPS FA',
+                        Stock == 'FSS' | Stock == 'FSO'|Stock == 'SNO'|Stock == 'SKG' ~ 'FRGSPS SU',
+                        Stock == 'FCF' | Stock == 'FHF'| Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'STL'|Stock == 'MGS'|Stock == 'LGS' ~ 'FRGSPS FA',
                         Stock == 'WVN' | Stock == 'WVH' ~ 'WCVI FA',
                         Stock == 'NOC' |Stock == 'WCN' | Stock == 'WCH'|Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'CRWOC FA',
                         Stock == 'SUM'  ~ 'CRWOC  SU',
@@ -67,7 +67,7 @@ ter2<-ter2 %>%
   group_by(FG,Year)%>%#,Age) %>%
   summarise(Terminal = sum(Terminal.Run))
 
-ter2
+print(ter2,n=100)
 
 str(ter2)
 # Stacked
@@ -93,6 +93,7 @@ catch$Fishery<-as.factor(catch$Fishery)
 catch$Year<-ymd(catch$Year, truncated =2L)
 catch$Age<-as.factor(catch$Age)
 catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
+catch$Total<-catch$AEQ.Catch+catch$AEQ.Shakers+catch$AEQ.CNRLeg+catch$AEQ.CNRSubLeg
 #catch <- droplevels(catch[!catch$Fishery == 'TSF FS'&!catch$Fishery == 'TCENTRAL FS' & 
 #                            !catch$Fishery == 'TNORTH'&!catch$Fishery == 'TWCVI FS'&
 #                            !catch$Fishery == 'TFRASER FS'&!catch$Fishery == 'TGS FS'&
@@ -128,8 +129,8 @@ catch<-catch[catch$Fishery %in% selected,]
 str(catch)
 catch2<-catch %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3'|Stock == 'NKS' ~ 'FRGSPS SP',
-                        Stock == 'FSS' | Stock == 'FSO' ~ 'FRGSPS SU',
-                        Stock == 'FCF' | Stock == 'FHF'| Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'MGS'|Stock == 'LGS' ~ 'FRGSPS FA',
+                        Stock == 'FSS' | Stock == 'FSO'|Stock == 'SNO'|Stock == 'SKG' ~ 'FRGSPS SU',
+                        Stock == 'FCF' | Stock == 'FHF'| Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'STL'|Stock == 'MGS'|Stock == 'LGS' ~ 'FRGSPS FA',
                         Stock == 'WVN' | Stock == 'WVH' ~ 'WCVI FA',
                         Stock == 'NOC' |Stock == 'WCN' | Stock == 'WCH'|Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'CRWOC FA',
                         Stock == 'SUM'  ~ 'CRWOC  SU',
