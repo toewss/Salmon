@@ -8,12 +8,12 @@ library(scales)
 library(cowplot)
 library(ggpubr)
 library(lubridate)
-
+library(here)
 Area=242623
 
 
 setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Salmon smolts/RMIS - Hatchery release data/RMIS Query 5 - Regional refined + Brood year/")
-Overall_Dataset<-read.csv("Overall Query all species all seasons.csv")
+Overall_Dataset<-read.csv("Data/Overall Query all species all seasons.csv")
 Overall_Dataset<-Overall_Dataset[Overall_Dataset$release_location_rmis_basin %in% c("JSM","JSVI","SWVI","GSMN","GSMS","GSVI","UPFR",
 "LOFR","LOTR","UPTR","NOOK","BESA","SJUA",
 "LOSK","UPSK","WICI","STIL","SNOH","EKPN",
