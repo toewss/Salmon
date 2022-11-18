@@ -34,7 +34,7 @@ showtext_auto()
 
 #sal<-read_xlsx("Data/ChinookEscape_1960_2020.xlsx")
 #----Read in terminal estimate data ---- 
-ter<-read_csv("Data/2021_07_cohort_escapement_couture_v3.csv")
+ter<-read_csv("Data/2022_5_Couture_cohort_escapement.csv")
 spec(ter)
 str(ter)
 ter$Stock<-as.factor(ter$Stock)
@@ -85,7 +85,7 @@ ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "
 
 
 #---Read in catch statistics----
-catch<-read_csv("Data/2021_07_catch_mortality_couture_v3.csv")
+catch<-read_csv("Data/2022_05_Couture_catch_mortality.csv")
 spec(catch)
 str(catch)
 catch$Stock<-as.factor(catch$Stock)
@@ -94,6 +94,7 @@ catch$Year<-ymd(catch$Year, truncated =2L)
 catch$Age<-as.factor(catch$Age)
 catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
 catch$Total<-catch$AEQ.Catch+catch$AEQ.Shakers+catch$AEQ.CNRLeg+catch$AEQ.CNRSubLeg
+
 #catch <- droplevels(catch[!catch$Fishery == 'TSF FS'&!catch$Fishery == 'TCENTRAL FS' & 
 #                            !catch$Fishery == 'TNORTH'&!catch$Fishery == 'TWCVI FS'&
 #                            !catch$Fishery == 'TFRASER FS'&!catch$Fishery == 'TGS FS'&
@@ -118,6 +119,13 @@ selected<-c("ALASKA T", "ALASKA N", "ALASKA S", "TAK YAK N","TAK TBR N","TBC TBR
             "S FALCON S","GEO ST S", "GEO ST T", "J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
 
 
+selected<-c( "TCOL R S","TNORTH FS","TCENTRAL FS","NORTH T",
+            
+            "NORTH N","TGS FS","TPS FS","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
+            
+            "WCVI N","WCVI ISBM S","WASH CST N","JNST N","FRASER N","CBC S","NBC AABM S","NBC ISBM S","WCVI AABM S","N FALCON S",
+            
+            "S FALCON S","GEO ST S", "GEO ST T", "J DE F N","PGSDN N","PGSDN S","PGSDO N", "PGSDO S", "BC JS S")
 
 
 selected<-c("NORTH T","NORTH N","CENTRAL T","CENTRAL N","WCVI T","N FALCON T","S FALCON T",
@@ -148,9 +156,9 @@ summary(catch2$FG)
 #  group_by(Stock,Year,Age) %>%
 #  summarise(Total = sum(Total))
 
-catch2<-catch2 %>%
-  group_by(FG, Year,Fishery)%>%#,Age) %>%
-  summarise(Total = sum(Total))
+catch3<-catch2 %>%
+  group_by(FG, Year)%>%#,Age) %>%
+  summarise(Total = sum(Catch))
 
 Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
@@ -162,9 +170,9 @@ Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) +
 #  xlab("")  
 
 Cat  
-catch2
-print(catch2,n=24)
-c<-as.data.frame(catch2)
+catch3
+print(catch3,n=48)
+c<-as.data.frame(catch3)
 write_csv(c,"OUTPUTS/Fisheries.csv") 
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
 

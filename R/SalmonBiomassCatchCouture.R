@@ -11,7 +11,7 @@ library(here)
 Area=243623
 ChinookW=8.5 #kg
 ############################## ESCAPEMENT
-setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Chinook salmon/Chinook FG from CTC/Data CTC 2022/")
+#setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Chinook salmon/Chinook FG from CTC/Data CTC 2022/")
 PSC_Cohort_Original<-read.csv("Data/2022_5_Couture_cohort_escapement.csv")
 PSC_Cohort_Original<-subset(PSC_Cohort_Original, select = -c(AEQCohort, StockNum, Age, Cohort))
 PSC_Cohort_Original<-aggregate(.~Year+Stock, data=PSC_Cohort_Original, FUN=sum)
@@ -26,7 +26,7 @@ PSC_Cohort_Original$FG<-ifelse(PSC_Cohort_Original$Stock %in% c(" FS2"," FS3"," 
 PSC_Cohort_Original$Stock<-NULL
 PSC_Cohort_Original<-aggregate(.~Year+FG, FUN=sum, data=PSC_Cohort_Original)
 # CATCH
-PSC_Catch_Original1<-read.csv("2022_05_Couture_catch_mortality.csv")
+PSC_Catch_Original1<-read.csv("Data/2022_05_Couture_catch_mortality.csv")
 PSC_Catch_Original<-PSC_Catch_Original1
 PSC_Catch_Original<-subset(PSC_Catch_Original, select=-c(FishNum, StockNum,
                                                          Scaled.to.Observed.Catch,
