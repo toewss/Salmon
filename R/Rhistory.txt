@@ -1,0 +1,512 @@
+HS_Diet$Average_Proportion_W<-Average_Proportion_N*Average_Weights/TotalW_HS
+rownames(HS_Diet)<-c("Rockfish", "Pacific herring", "Adult Chinook", "Other salmonids","Adult Coho","Adult Chum", "Chinook smolts","Coho smolts","Chum smolts","Pacific hake", "Other fish")
+View(HS_Diet)
+View(HS_Diet)
+# Lance et al. (2012)(Frequency of occurence, Northern Puget Sound)
+Rockfish_propN<-(2.75+5.43+3.55)/3/100
+CSL_RF_PropN<-28.6 #Weise and Harvey 2008 (Rockfish)
+CSL_H_PropN<-2.1 #Weise and Harvey 2008 (Hake)
+CSL_ChinookS_PropN<-1 # Chasco et al. 2017
+CSL_Chinook_PropN<-5.3 #Weise and Harvey 2008
+CSL_Other_Salmon<-1.8
+CSL_Other_PropN<-100-(CSL_H_PropN+CSL_RF_PropN+CSL_ChinookS_PropN+CSL_Chinook_PropN+CSL_Other_Salmon)
+CSL_Other_PropN
+Other_AverageW<-((7.8*0.5)+(0.150*47.3)+(4.7*0.144)+(2.1*2.7)+(1.9*0.068))/(7.8+0.150+4.7+2.1+1.9)
+Other_AverageW
+Other_SalmonW<-(((1.8+6.8)/2)+1.7+3.6+6.1)/4
+# Other preys mainly include juvenile spiny dogfish(7.8%, 0.5kg, estimated prey body mass of 500g (Weise and Harvey 2008)), sardines (47.3%, 0.150 kg: https://wdfw.wa.gov/fishing/commercial/purse-seine-sardine/biology), market squid (4.7%, 0.144 kg, https://www.google.com/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&cad=rja&uact=8&ved=2ahUKEwj6mfyB1c31AhWUHzQIHWRZCj8QFnoECAMQAw&url=https%3A%2F%2Fnrm.dfg.ca.gov%2FFileHandler.ashx%3FDocumentID%3D34420&usg=AOvVaw251iX5NWjlfjYSGRZi3YDN) Pacific jack mackerel (2.1%, 2.7kg,https://www.fisheries.noaa.gov/species/pacific-mackerel), anchovy (1.9%, 0.068 kg, https://www.fishbase.se/Summary/SpeciesSummary.php?ID=1664&AT=anchovy)
+ChinookW<-8.5
+ChinookS_AverageW<-0.038 #Beamish et al. 2012 (Juvenile Chinook)
+PH_AverageW<-0.64 # Noaa (no date) https://www.fisheries.noaa.gov/species/pacific-whiting (hake)
+RF_AverageW<-2.5 # Fishbase (but maximum published weight!)
+CSL_TotalW<-(CSL_RF_PropN*RF_AverageW)+(CSL_ChinookS_PropN*ChinookS_AverageW)+(CSL_Chinook_PropN*ChinookW)+(CSL_H_PropN*PH_AverageW)+(CSL_Other_PropN*Other_AverageW)+
+(CSL_Other_Salmon*Other_SalmonW)
+CSL_TotalW
+CSL_RF_Prop_W<-(CSL_RF_PropN*RF_AverageW)/CSL_TotalW
+CSL_RF_Prop_W
+CSL_H_Prop_W<-(CSL_H_PropN*PH_AverageW)/CSL_TotalW
+CSL_H_Prop_W
+CSL_ChinookS_Prop_W<-(CSL_ChinookS_PropN*ChinookS_AverageW)/CSL_TotalW
+CSL_ChinookS_Prop_W
+CSL_Chinook_Prop_W<-(CSL_Chinook_PropN*ChinookW)/CSL_TotalW
+CSL_Chinook_Prop_W
+CSL_Other_Prop_W<-(CSL_Other_PropN*Other_AverageW)/CSL_TotalW
+CSL_Other_Prop_W
+CSL_Othersalmon_PropW<-(CSL_Other_Salmon*Other_SalmonW)/CSL_TotalW
+CSL_Chinook_Prop_W+CSL_ChinookS_Prop_W+CSL_Other_Prop_W+CSL_H_Prop_W+CSL_RF_Prop_W+CSL_Othersalmon_PropW
+Average_Proportion_N<-c(CSL_RF_PropN,CSL_H_PropN,CSL_Chinook_PropN,CSL_ChinookS_PropN,CSL_Other_PropN)
+Average_Weights<-c(RF_AverageW,PH_AverageW,ChinookW,ChinookS_AverageW,Other_AverageW)
+Average_Proportion_W<-c(CSL_RF_Prop_W, CSL_H_Prop_W,CSL_Chinook_Prop_W,CSL_ChinookS_Prop_W,CSL_Other_Prop_W)
+CSL_Diet<-data.frame(Average_Proportion_N,Average_Weights, Average_Proportion_W)
+View(CSL_Diet)
+View(CSL_Diet)
+rownames(CSL_Diet)<-c("Rockfish", "Pacific hake", "Chinook (adult)", "Chinook (smolts)", "Other fish")
+View(CSL_Diet)
+View(CSL_Diet)
+View(HS_Diet)
+View(HS_Diet)
+View(HS_Diet)
+PropW_All_Oncor(326/1000)
+PropW_All_Oncor<-(326/1000)
+PropW_All_Oncor<-(326/1000)*100
+ChinookW_Prop<-PropW_All_Oncor/5
+ChinookW_Prop
+ChinookW_Prop_Season<-ChinookW_Prop/100/3
+ChinookW_Prop_Season
+View(HS_Diet)
+View(HS_Diet)
+#Trites and Calkins: Herrings dominate the forage fish categories so the average diet proportion of forage fish will be used as a proxy for herring
+SSL_RF_PropN<-19 # Trites and Calkins 2008
+SSL_H_PropN<-19.5 # Trites and Calkins 2008 (forage fish, all assumed herring here)
+SSL_ChinookS_PropN<-2 # Chasco et al. 2017
+SSL_Chinook_PropN<-4.5 #Weise and Harvey 2008
+SSL_Other_PropN<-100-(SSL_H_PropN+SSL_RF_PropN+SSL_ChinookS_PropN+SSL_Chinook_PropN)
+RF_AverageW<-2.5 # Fishbase (but maximum published weight!)
+H_AverageW<-0.3 # Noaa (no date) https://www.fisheries.noaa.gov/species/pacific-herring
+ChinookW<-8.5
+ChinookS_AverageW<-0.038 #Beamish et al. 2012 (Juvenile Chinook)
+Other_AverageW<- (0.064+22.7+13+1.4)/4 # Majority of gadids (hake and pacific cod) and flatfish (halibut, rock sole)
+# Pacific cod (maximum published weight!, fishbase), Halibut (https://guidesly.com/fishing/fish-species/pacific-halibut), Rocksole (http://www.pacific-salmon.com/products/groundfish/)
+SSL_TotalW<-(SSL_RF_PropN*RF_AverageW)+(SSL_H_PropN*H_AverageW)+(SSL_ChinookS_PropN*ChinookS_AverageW)+(SSL_Chinook_PropN*ChinookW)+(SSL_Other_PropN*Other_AverageW) # Average weight SSl (Shields et al. 2008)
+SSL_TotalW
+SSL_RF_Prop_W<-(SSL_RF_PropN*RF_AverageW)/SSL_TotalW
+SSL_RF_Prop_W
+SSL_H_Prop_W<-(SSL_H_PropN*H_AverageW)/SSL_TotalW
+SSL_H_Prop_W
+SSL_ChinookS_Prop_W<-(SSL_ChinookS_PropN*ChinookS_AverageW)/SSL_TotalW
+SSL_ChinookS_Prop_W
+SSL_Chinook_Prop_W<-(SSL_Chinook_PropN*ChinookW)/SSL_TotalW
+SSL_Chinook_Prop_W
+SSL_Other_Prop_W<-(SSL_Other_PropN*Other_AverageW)/SSL_TotalW
+Average_Proportion_N<-c(SSL_RF_PropN,SSL_H_PropN,SSL_Chinook_PropN,SSL_ChinookS_PropN,SSL_Other_PropN)
+Average_Weights<-c(RF_AverageW,H_AverageW,ChinookW,ChinookS_AverageW,Other_AverageW)
+Average_Proportion_W<-c(SSL_RF_Prop_W, SSL_H_Prop_W,SSL_Chinook_Prop_W,SSL_ChinookS_Prop_W,SSL_Other_Prop_W)
+SSL_Diet<-data.frame(Average_Proportion_N,Average_Weights, Average_Proportion_W)
+View(SSL_Diet)
+View(SSL_Diet)
+rownames(SSL_Diet)<-c("Rockfish", "Herring", "Chinook (adult)", "Chinook (smolts)", "Other fish")
+View(SSL_Diet)
+View(SSL_Diet)
+library(sf)
+library(tmap)
+library(dplyr)
+library(purrr)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rnaturalearthhires)
+library(mapview)
+library(grid)
+library(ggplot2)
+library(magrittr)
+library(raster)
+library(ggspatial)
+library(terra)
+library(ggmap)
+library(basemaps)
+library(magick)
+library(leaflet)
+library(raster)
+library(ncdf4)
+library(rgeos)
+library(rgdal)
+library(cowplot)
+world <- ne_countries(scale = "medium", returnclass = "sf",  type='map_units')
+states_all <- ne_states(
+country = c("canada", "united states of america"),
+returnclass = "sf"
+)
+plot(states_all)
+states <- states_all %>%
+filter(name_en == "British Columbia" |
+name_en=="Alberta"|
+name_en == "California" |
+name_en=="Idaho"|
+name_en=="Montana"|
+name_en=="Utah"|
+name_en=="Arizona"|
+name_en=="Nevada"|
+name_en == "Washington" |
+name_en == "Oregon")
+plot(states)
+# reference mapping code (from Harbor seals)
+Background_map<-ggplot(data = states) +
+geom_sf(fill="white") +
+annotate(geom = "text", x = -118.7, y = 50.2, label = "CANADA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -120, y = 46.8, label = "Washington",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -120, y = 43.8, label = "Oregon",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -122, y = 40.5, label = "California",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -125, y = 55, label = "British Columbia",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -118.7, y = 47.8, label = "USA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -122.9, y = 48.2, label = "PS",
+fontface = "plain", color = "black", size = 3) +
+annotation_scale(location = "bl", width_hint = 0.4) +
+annotation_north_arrow(location = "bl", which_north = "true",
+pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
+style = north_arrow_fancy_orienteering) +
+coord_sf(xlim = c(-136, -115), ylim = c(35, 60), expand = FALSE)+
+annotate("rect", xmin=-133.2625, xmax=-121.5542, ymin=41.62917, ymax=54.22083, alpha=0.4,fill="steelblue")+
+xlab("Longitude") + ylab("Latitude") +
+theme_classic()+
+theme(panel.background=element_rect(fill="aliceblue"))
+Background_map
+# INSET MAP - WORLD
+World_Map<-ggplot() +
+geom_sf(data = world) +
+geom_rect(aes(xmin = -2500000, xmax = 20000, ymin = -622083, ymax = 2562917), color = "steelblue", fill = NA)  +
+coord_sf(crs = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")+
+theme_minimal()+
+theme(panel.grid.minor = element_blank())
+plot(World_Map)
+# Overall Map
+gg_inset_map1<-ggdraw()+
+draw_plot(Background_map, x=-0.3, y=0)+
+draw_plot(World_Map, x=0.3, y =0.5, width=0.5, height=0.5)
+gg_inset_map1
+library(sf)
+library(tmap)
+library(dplyr)
+library(purrr)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rnaturalearthhires)
+library(mapview)
+library(grid)
+library(ggplot2)
+library(magrittr)
+library(raster)
+library(ggspatial)
+library(terra)
+library(ggmap)
+library(basemaps)
+library(magick)
+library(leaflet)
+library(raster)
+library(ncdf4)
+library(rgeos)
+library(rgdal)
+library(cowplot)
+world <- ne_countries(scale = "medium", returnclass = "sf",  type='map_units')
+states_all <- ne_states(
+country = c("canada", "united states of america"),
+returnclass = "sf"
+)
+plot(states_all)
+states <- states_all %>%
+filter(name_en == "British Columbia" |
+name_en=="Alberta"|
+name_en == "California" |
+name_en=="Idaho"|
+name_en=="Montana"|
+name_en=="Utah"|
+name_en=="Arizona"|
+name_en=="Nevada"|
+name_en == "Washington" |
+name_en == "Oregon")
+plot(states)
+# reference mapping code (from Harbor seals)
+Background_map<-ggplot(data = states) +
+geom_sf(fill="white") +
+annotate(geom = "text", x = -118.7, y = 50.2, label = "CANADA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -120, y = 46.8, label = "Washington",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -120, y = 43.8, label = "Oregon",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -122, y = 40.5, label = "California",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -125, y = 55, label = "British Columbia",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -118.7, y = 47.8, label = "USA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -122.9, y = 48.2, label = "PS",
+fontface = "plain", color = "black", size = 3) +
+annotation_scale(location = "bl", width_hint = 0.4) +
+annotation_north_arrow(location = "bl", which_north = "true",
+pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
+style = north_arrow_fancy_orienteering) +
+coord_sf(xlim = c(-136, -115), ylim = c(35, 60), expand = FALSE)+
+annotate("rect", xmin=-133.2625, xmax=-121.5542, ymin=36.3744., ymax=54.22083, alpha=0.4,fill="steelblue")+
+xlab("Longitude") + ylab("Latitude") +
+theme_classic()+
+theme(panel.background=element_rect(fill="aliceblue"))
+Background_map
+# INSET MAP - WORLD
+World_Map<-ggplot() +
+geom_sf(data = world) +
+geom_rect(aes(xmin = -2500000, xmax = 20000, ymin = -622083, ymax = 2562917), color = "steelblue", fill = NA)  +
+coord_sf(crs = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")+
+theme_minimal()+
+theme(panel.grid.minor = element_blank())
+plot(World_Map)
+# Overall Map
+gg_inset_map1<-ggdraw()+
+draw_plot(Background_map, x=-0.3, y=0)+
+draw_plot(World_Map, x=0.3, y =0.5, width=0.5, height=0.5)
+gg_inset_map1
+Background_map<-ggplot(data = states) +
+geom_sf(fill="white") +
+annotate(geom = "text", x = -118.7, y = 50.2, label = "CANADA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -120, y = 46.8, label = "Washington",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -120, y = 43.8, label = "Oregon",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -122, y = 40.5, label = "California",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -125, y = 55, label = "British Columbia",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -118.7, y = 47.8, label = "USA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -122.9, y = 48.2, label = "PS",
+fontface = "plain", color = "black", size = 3) +
+annotation_scale(location = "bl", width_hint = 0.4) +
+annotation_north_arrow(location = "bl", which_north = "true",
+pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
+style = north_arrow_fancy_orienteering) +
+coord_sf(xlim = c(-136, -115), ylim = c(34, 60), expand = FALSE)+
+annotate("rect", xmin=-133.2625, xmax=-121.5542, ymin=36.3744., ymax=54.22083, alpha=0.4,fill="steelblue")+
+xlab("Longitude") + ylab("Latitude") +
+theme_classic()+
+theme(panel.background=element_rect(fill="aliceblue"))
+library(sf)
+library(tmap)
+library(dplyr)
+library(purrr)
+library(rnaturalearth)
+library(rnaturalearthdata)
+library(rnaturalearthhires)
+library(mapview)
+library(grid)
+library(ggplot2)
+library(magrittr)
+library(raster)
+library(ggspatial)
+library(terra)
+library(ggmap)
+library(basemaps)
+library(magick)
+library(leaflet)
+library(raster)
+library(ncdf4)
+library(rgeos)
+library(rgdal)
+library(cowplot)
+world <- ne_countries(scale = "medium", returnclass = "sf",  type='map_units')
+states_all <- ne_states(
+country = c("canada", "united states of america"),
+returnclass = "sf"
+)
+plot(states_all)
+states <- states_all %>%
+filter(name_en == "British Columbia" |
+name_en=="Alberta"|
+name_en == "California" |
+name_en=="Idaho"|
+name_en=="Montana"|
+name_en=="Utah"|
+name_en=="Arizona"|
+name_en=="Nevada"|
+name_en == "Washington" |
+name_en == "Oregon")
+plot(states)
+Background_map<-ggplot(data = states) +
+geom_sf(fill="white") +
+annotate(geom = "text", x = -118.7, y = 50.2, label = "CANADA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -120, y = 46.8, label = "Washington",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -120, y = 43.8, label = "Oregon",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -122, y = 40.5, label = "California",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -125, y = 55, label = "British Columbia",
+fontface = "italic", color = "darkgrey", size = 3.5) +
+annotate(geom = "text", x = -118.7, y = 47.8, label = "USA",
+fontface = "bold", color = "black", size = 4) +
+annotate(geom = "text", x = -122.9, y = 48.2, label = "PS",
+fontface = "plain", color = "black", size = 3) +
+annotation_scale(location = "bl", width_hint = 0.4) +
+annotation_north_arrow(location = "bl", which_north = "true",
+pad_x = unit(0.75, "in"), pad_y = unit(0.5, "in"),
+style = north_arrow_fancy_orienteering) +
+coord_sf(xlim = c(-136, -115), ylim = c(34, 60), expand = FALSE)+
+annotate("rect", xmin=-133.2625, xmax=-121.5542, ymin=36.3744, ymax=54.22083, alpha=0.4,fill="steelblue")+
+xlab("Longitude") + ylab("Latitude") +
+theme_classic()+
+theme(panel.background=element_rect(fill="aliceblue"))
+Background_map
+# INSET MAP - WORLD
+World_Map<-ggplot() +
+geom_sf(data = world) +
+geom_rect(aes(xmin = -2500000, xmax = 20000, ymin = -622083, ymax = 2562917), color = "steelblue", fill = NA)  +
+coord_sf(crs = "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +ellps=WGS84 +units=m +no_defs")+
+theme_minimal()+
+theme(panel.grid.minor = element_blank())
+gg_inset_map1<-ggdraw()+
+draw_plot(Background_map, x=-0.3, y=0)+
+draw_plot(World_Map, x=0.3, y =0.5, width=0.5, height=0.5)
+gg_inset_map1
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(ggplot2)
+library(reshape2)
+library(tidyverse)
+library(scales)
+library(cowplot)
+library(ggpubr)
+library(lubridate)
+setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Salmon smolts/RMIS - Hatchery release data/RMIS Qu
+getwd()
+getwd()
+getwd()
+setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Salmon smolts/RMIS - Hatchery release data/RMIS Query 5 - Regional refined + Brood year/")
+setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Salmon smolts/RMIS - Hatchery release data/RMIS Query 5 - Regional refined + Brood year/")
+coho<-read.csv("Coho hatchery releases per year.csv")
+View(coho)
+View(coho)
+View(coho)
+View(coho)
+coho<-subset(coho, select=c(2,3,))
+coho=subset(coho, select=c(2,3))
+View(coho)
+View(coho)
+View(coho)
+View(coho)
+Months<-rep(c("Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"), times=42)
+coho_months_year <- coho[rep(seq_len(nrow(coho)), each = 12),]
+coho_months_year$Months<-Months
+View(coho_months_year)
+View(coho_months_year)
+coho<-read.csv("Coho hatchery releases per year.csv")
+View(coho)
+View(coho)
+coho=subset(coho, select=c(2,3,5))
+Months<-rep(c("Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"), times=42)
+coho_months_year <- coho[rep(seq_len(nrow(coho)), each = 12),]
+coho_months_year$Months<-Months
+View(coho_months_year)
+View(coho_months_year)
+write.csv(coho_months_year, "Coho_with years and months - Ecosim.csv")
+chum<-read.csv("Chum hatchery releases per year.csv")
+chum<-read.csv("Chum hatchery releases per year.csv")
+chum=subset(chum, select=c(2,3,5))
+Months<-rep(c("Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"), times=42)
+chum_months_year <- chum[rep(seq_len(nrow(chum)), each = 12),]
+chum_months_year$Months<-Months
+write.csv(chum_months_year, "Chum_with years and months - Ecosim.csv")
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(ggplot2)
+library(reshape2)
+library(tidyverse)
+library(scales)
+library(cowplot)
+library(ggpubr)
+Area=243623
+ChinookW=8.5 #kg
+############################## ESCAPEMENT
+setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Chinook salmon/Chinook FG from CTC/Data CTC 2022/")
+PSC_Cohort_Original<-read.csv("2022_5_Couture_cohort_escapement.csv")
+PSC_Cohort_Original<-subset(PSC_Cohort_Original, select = -c(AEQCohort, StockNum, Age, Cohort))
+PSC_Cohort_Original<-aggregate(.~Year+Stock, data=PSC_Cohort_Original, FUN=sum)
+PSC_Cohort_Original$Terminal.Run<-NULL
+PSC_Cohort_Original$FG<-ifelse(PSC_Cohort_Original$Stock %in% c(" FS2"," FS3"," NKS"), "FRGSPS SP",
+ifelse(PSC_Cohort_Original$Stock %in% c(" FSS"," FSO"," SNO", " SKG"), "FRGSPS SU",
+ifelse(PSC_Cohort_Original$Stock %in% c(" FCF"," FHF"," MGS"," LGS"," NKF"," PSY"," PSN"," PSF"," STL"), "FRGSPS FA",
+ifelse(PSC_Cohort_Original$Stock %in% c(" WVH"," WVN"), "WCVI FA",
+ifelse(PSC_Cohort_Original$Stock %in% c(" CWS"," WSH"), "CRWOR SP",
+ifelse(PSC_Cohort_Original$Stock %in% c(" SUM"), "CRWOR SU",
+ifelse(PSC_Cohort_Original$Stock %in% c(" WCN"," WCH"," NOC"," CWF"," MCB"," LYF"," URB"," BON", " SPR"), "CRWOR FA", 0)))))))
+PSC_Cohort_Original$Stock<-NULL
+PSC_Cohort_Original<-aggregate(.~Year+FG, FUN=sum, data=PSC_Cohort_Original)
+# CATCH
+PSC_Catch_Original1<-read.csv("2022_05_Couture_catch_mortality.csv")
+PSC_Catch_Original<-PSC_Catch_Original1
+PSC_Catch_Original<-subset(PSC_Catch_Original, select=-c(FishNum, StockNum,
+Scaled.to.Observed.Catch,
+Model.Catch.to.Observed.Catch.Ratio,
+AEQ.Catch, AEQ.Shakers, AEQ.CNRSubLeg, AEQ.CNRLeg))
+PSC_Catch_Original$X<-NULL
+PSC_Catch_Original$Fishery<-NULL
+PSC_Catch_Original$Age<-NULL
+PSC_Catch_Original<-aggregate(.~Year+ Stock, data=PSC_Catch_Original, FUN=sum)
+PSC_Catch_Original$Overall_Catch<-rowSums(PSC_Catch_Original[,(3:6)])
+PSC_Catch_Original<-subset(PSC_Catch_Original, select=-c(Catch, Shakers, CNR.Legals, CNR.Sublegals))
+PSC_Catch_Original$FG<-ifelse(PSC_Catch_Original$Stock %in% c(" FS2"," FS3"," NKS"), "FRGSPS SP",
+ifelse(PSC_Catch_Original$Stock %in% c(" FSS"," FSO"," SNO"," SKG"), "FRGSPS SU",
+ifelse(PSC_Catch_Original$Stock %in% c(" FCF"," FHF"," MGS"," LGS"," NKF"," PSY"," PSN"," PSF"," STL"), "FRGSPS FA",
+ifelse(PSC_Catch_Original$Stock %in% c(" WVH"," WVN"), "WCVI FA",
+ifelse(PSC_Catch_Original$Stock %in% c(" CWS"," WSH"), "CRWOR SP",
+ifelse(PSC_Catch_Original$Stock %in% c(" SUM"), "CRWOR SU",
+ifelse(PSC_Catch_Original$Stock %in% c(" WCN"," WCH"," NOC"," CWF"," MCB"," LYF"," URB"," BON", " SPR"), "CRWOR FA", 0)))))))
+View(PSC_Catch_Original)
+View(PSC_Catch_Original)
+library(dplyr)
+library(data.table)
+library(tidyr)
+library(ggplot2)
+library(reshape2)
+library(tidyverse)
+library(scales)
+library(cowplot)
+library(ggpubr)
+Area=242623
+ChinookW=8.5/1000
+############################## ESCAPEMENT
+setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Chinook salmon/Chinook FG from CTC/Data CTC 2022/")
+PSC_Cohort_Original<-read.csv("2022_5_Couture_cohort_escapement.csv")
+PSC_Cohort_Original<-subset(PSC_Cohort_Original, select = -c(AEQCohort, StockNum, Age, Cohort))
+PSC_Cohort_Original<-aggregate(.~Year+Stock, data=PSC_Cohort_Original, FUN=sum)
+PSC_Cohort_Original$Terminal.Run<-NULL
+PSC_Cohort_Original$FG<-ifelse(PSC_Cohort_Original$Stock %in% c(" FS2"," FS3"," NKS"), "FRGSPS SP",
+ifelse(PSC_Cohort_Original$Stock %in% c(" FSS"," FSO"," SNO", " SKG"), "FRGSPS SU",
+ifelse(PSC_Cohort_Original$Stock %in% c(" FCF"," FHF"," MGS"," LGS"," NKF"," PSY"," PSN"," PSF"," STL"), "FRGSPS FA",
+ifelse(PSC_Cohort_Original$Stock %in% c(" WVH"," WVN"), "WCVI FA",
+ifelse(PSC_Cohort_Original$Stock %in% c(" CWS"," WSH"), "CRWOR SP",
+ifelse(PSC_Cohort_Original$Stock %in% c(" SUM"), "CRWOR SU",
+ifelse(PSC_Cohort_Original$Stock %in% c(" WCN"," WCH"," NOC"," CWF"," MCB"," LYF"," URB"," BON", " SPR"), "CRWOR FA", 0)))))))
+PSC_Cohort_Original$Stock<-NULL
+PSC_Cohort_Original<-aggregate(.~Year+FG, FUN=sum, data=PSC_Cohort_Original)
+PSC_Catch_Original1<-read.csv("2022_05_Couture_catch_mortality.csv")
+PSC_Catch_Original<-PSC_Catch_Original1
+PSC_Catch_Original<-subset(PSC_Catch_Original, select=-c(FishNum, StockNum,
+Scaled.to.Observed.Catch,
+Model.Catch.to.Observed.Catch.Ratio,
+AEQ.Catch, AEQ.Shakers, AEQ.CNRSubLeg, AEQ.CNRLeg))
+unique(PSC_Catch_Original$Fishery)
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="ALASKA T"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="ALASKA N"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="TBC TBR FN"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="TAK YAK N"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="ALASKA S"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="TAK TBR N"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="TYK YAK FN"),]
+PSC_Catch_Original<-PSC_Catch_Original[(PSC_Catch_Original$Fishery!="TAK TBR S"),]
+PSC_Catch_Original$Fishery<-NULL
+PSC_Catch_Original$Age<-NULL
+PSC_Catch_Original<-aggregate(.~Year+ Stock, data=PSC_Catch_Original, FUN=sum)
+PSC_Catch_Original$X<-NULL
+PSC_Catch_Original$Overall_Catch<-rowSums(PSC_Catch_Original[,(3:6)])
+PSC_Catch_Original<-subset(PSC_Catch_Original, select=-c(Catch, Shakers, CNR.Legals, CNR.Sublegals))
+PSC_Catch_Original$FG<-ifelse(PSC_Catch_Original$Stock %in% c(" FS2"," FS3"," NKS"), "FRGSPS SP",
+ifelse(PSC_Catch_Original$Stock %in% c(" FSS"," FSO"," SNO"," SKG"), "FRGSPS SU",
+ifelse(PSC_Catch_Original$Stock %in% c(" FCF"," FHF"," MGS"," LGS"," NKF"," PSY"," PSN"," PSF"," STL"), "FRGSPS FA",
+ifelse(PSC_Catch_Original$Stock %in% c(" WVH"," WVN"), "WCVI FA",
+ifelse(PSC_Catch_Original$Stock %in% c(" CWS"," WSH"), "CRWOR SP",
+ifelse(PSC_Catch_Original$Stock %in% c(" SUM"), "CRWOR SU",
+ifelse(PSC_Catch_Original$Stock %in% c(" WCN"," WCH"," NOC"," CWF"," MCB"," LYF"," URB"," BON", " SPR"), "CRWOR FA", 0)))))))
+PSC_Catch_Original$Stock<-NULL
+PSC_Catch_Original$X<-NULL
+PSC_Catch_Original<-aggregate(.~Year+FG, FUN=sum, data=PSC_Catch_Original)
+Adult_Spawner_Stanza<-PSC_Cohort_Original%>%left_join(PSC_Catch_Original)
+Adult_Spawner_Stanza$Abundance<-Adult_Spawner_Stanza$Escapement+Adult_Spawner_Stanza$Overall_Catch
+Adult_Spawner_Stanza$Biomass_t_km2<-(Adult_Spawner_Stanza$Abundance*ChinookW)/Area
+Adult_Spawner_Stanza<-subset(Adult_Spawner_Stanza, select=c(Year, FG, Abundance, Biomass_t_km2))
