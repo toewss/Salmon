@@ -38,8 +38,8 @@ ter<-read_csv("Data/2022_5_Couture_cohort_escapement.csv")
 ter<-subset(ter, select = -c(AEQCohort, StockNum,  Cohort))
 ter$Stock<-as.factor(ter$Stock)
 #ter$StockNum<-as.factor(ter$StockNum)
-ter$Year<-ymd(ter$Year, truncated =2L)
-ter$Age<-as.factor(ter$Age)
+#ter$Year<-ymd(ter$Year, truncated =2L)
+#ter$Age<-as.factor(ter$Age)
 ter<-aggregate(.~Year+Stock, data=ter, FUN=sum)
 #ter<-aggregate(.~Year+Stock+Age, data=ter, FUN=sum)
 ter$Terminal.Run<-NULL
@@ -61,6 +61,9 @@ summary(ter2$FG)
 ter2$Stock<-NULL
 ter3<-aggregate(.~Year+FG, FUN=sum, data=ter2)
 #ter3<-aggregate(.~Year+FG+Age, FUN=sum, data=ter2)
+ter3$Age<-NULL
+ter3$Year<-as.integer(ter3$Year)
+str(ter3)
 view(ter3)
 
 # Stacked
@@ -83,7 +86,7 @@ catch<-read_csv("Data/2022_05_Couture_catch_mortality.csv")
 spec(catch)
 str(catch)
 
-catch<-subset(catch, select=-c(FishNum, StockNum,Scaled.to.Observed.Catch, Model.Catch.to.Observed.Catch.Ratio,
+catch<-subset(catch, select=-c(...1,FishNum, StockNum,Scaled.to.Observed.Catch, Model.Catch.to.Observed.Catch.Ratio,
                                                          AEQ.Catch, AEQ.Shakers, AEQ.CNRSubLeg, AEQ.CNRLeg))
 unique(catch$Fishery)
 #----Remove Fisheries Outside of SRKW Summer Zone----
@@ -97,15 +100,13 @@ catch<-catch[(catch$Fishery!="TAK TBR N"),]
 catch<-catch[(catch$Fishery!="TYK YAK FN"),]
 catch<-catch[(catch$Fishery!="TAK TBR S"),]
 catch$Fishery<-NULL
-#catch$Age<-NULL
+catch$Age<-NULL
 catch<-aggregate(.~Year+ Stock, data=catch, FUN=sum)
 catch$X<-NULL
 str(catch)
-catch$Overall_Catch<-rowSums(catch[,(5:8)])
-#catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
+catch$Overall_Catch<-rowSums(catch[,(3:6)])
 catch2<-subset(catch, select=-c(Catch, Shakers, CNR.Legals, CNR.Sublegals))
 
-#"TGS FS","TPS FS","TGEO ST FN","TSF FS","TFRAS FN","TPS FN","TWAC FN","TWCVI FS","TFRASER FS","TCOL R N") 
 #----Combine catch data by group and year----
 str(catch2)
 catch2<-catch2 %>%
@@ -117,7 +118,6 @@ catch2<-catch2 %>%
                         Stock == 'SUM'  ~ 'CRWOC  SU',
                         Stock == 'CWS' | Stock == 'WSH' ~ 'CRWOC  SP'))
 
-
 str(catch2)
 catch2$FG<-as.factor((catch2$FG))
 catch2$FG <-factor(catch2$FG, levels=c('FRGSPS SP', 'FRGSPS SU', 'FRGSPS FA','WCVI FA','CRWOC  SP','CRWOC  SU','CRWOC FA' ))
@@ -125,29 +125,12 @@ catch2$FG <-factor(catch2$FG, levels=c('FRGSPS SP', 'FRGSPS SU', 'FRGSPS FA','WC
 catch2$Stock<-NULL
 catch2$X<-NULL
 catch3<-aggregate(.~Year+FG, FUN=sum, data=catch2)
+catch3$Year<-as.integer(catch3$Year)
+str(catch3)
 view(catch3)
 
 
-
-catch$Stock<-as.factor(catch$Stock)
-catch$Fishery<-as.factor(catch$Fishery)
-catch$Year<-ymd(catch$Year, truncated =2L)
-catch$Age<-as.factor(catch$Age)
-
-
-
-
-str(catch2)
-summary(catch2$FG)
-
-
-
-
-catch3<-catch2 %>%
-  group_by(Year,FG )%>%#,Age) %>%
-  summarise(Total = sum(Catch))
-
-view(catch3)
+#catch$Year<-ymd(catch$Year, truncated =2L)
 Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
@@ -158,27 +141,18 @@ Cat<-  ggplot(catch2, aes(fill=Fishery, y=Total, x=Year)) +
 #  xlab("")  
 
 Cat  
-catch3
-print(catch3,n=48)
-c<-as.data.frame(catch3)
-write_csv(c,"OUTPUTS/Fisheries.csv") 
+
+#c<-as.data.frame(catch3)
+#write_csv(c,"OUTPUTS/Fisheries.csv") 
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
 
+#----Create ID index for both dataframes---- 
+Adult_Spawner_Stanza<-ter%>%left_join(catch3)
+Adult_Spawner_Stanza$Abundance<-Adult_Spawner_Stanza$Escapement+Adult_Spawner_Stanza$Overall_Catch
+Adult_Spawner_Stanza$Biomass_t_km2<-(Adult_Spawner_Stanza$Abundance*ChinookW)/Area
+#Adult_Spawner_Stanza<-subset(Adult_Spawner_Stanza, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
-
-#----Create ID index for both dataframes----  
-catch2 <- cbind(ID = 1:nrow(catch2), catch2)    # Applying cbind function
-#catch2$Type<-c("Fishery")                                      # Printing updated data
-ter2 <- cbind(ID = 1:nrow(ter2), ter2)    # Applying cbind function
-#ter2$Type<-c("Terminal")  
-
-df<- full_join(ter2, catch2, by = 'ID')
-df
-df$Abund<-df$Terminal+df$Total
-df$Biomass<-df$Abund*8.5
-df$catratio<-df$Total/df$Abund
-df
 
 abund<- ggplot(df, aes(y=Abund, x=Year.x)) + 
   geom_bar(position="stack", stat="identity")+

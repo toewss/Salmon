@@ -16,45 +16,34 @@ rm(list = ls(all=TRUE)) ; ls()
 
 suppressMessages(library(dplyr))
 suppressMessages(library(lubridate))
-#suppressMessages(library(maptools))
-#suppressMessages(library(rgeos))
-#suppressMessages(library(rgdal))
-#suppressMessages(library(spatial))
 suppressMessages(library(here))
-#suppressMessages(library(sf))
 suppressMessages(library(tibble))
 suppressMessages(library(readxl))
 suppressMessages(library(ggplot2))
-#suppressMessages(library(raster))
-#suppressMessages(library(sp))
-#suppressMessages(library(inlabru))
 suppressMessages(library(ggpubr))
-#suppressMessages(library(renv))
 library(readr)
 library(ggridges)
-#library(plot3D)
-#library(ggrgl)
 library(tidyverse)
 library(ggrepel)
 library(ggtext)
 library(showtext)
-
+library(hrbrthemes)
+library(viridis)
 font_add_google("Lato")
 showtext_auto()
 
-# Libraries
+Area=242623
+ChinookW=8.5/1000
 
-library(hrbrthemes)
-library(viridis)
-#sal<-read_xlsx("Data/ChinookEscape_1960_2020.xlsx")
 #----Read in terminal estimate data ---- 
-ter<-read_csv("Data/2021_07_cohort_escapement_couture_v3.csv")
-spec(ter)
-str(ter)
+ter<-read_csv("Data/2022_5_Couture_cohort_escapement.csv")
+ter<-subset(ter, select = -c(AEQCohort, StockNum,  Cohort))
 ter$Stock<-as.factor(ter$Stock)
-ter$StockNum<-as.factor(ter$StockNum)
-ter$Year<-ymd(ter$Year, truncated =2L)
-ter$Age<-as.factor(ter$Age)
+ter$Age<-as.factor((ter$Age))
+str(ter)
+ter<-aggregate(.~Age+Year+Stock, data=ter, FUN=sum)
+#ter<-aggregate(.~Year+Stock+Age, data=ter, FUN=sum)
+ter$Terminal.Run<-NULL
 
 #----Combine abnundance data by group and year----
 str(ter)
@@ -72,29 +61,23 @@ ter2<-ter %>%
                         Stock == 'CWF' | Stock == 'MCB'|Stock == 'LYF'|Stock == 'URB'|Stock == 'BON'|Stock == 'SPR' ~ 'COR FA',
                         Stock == 'SUM'  ~ 'COR SU',
                         Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
-str(ter2)
+
 ter2$FG<-as.factor((ter2$FG))
 ter2$FG <-factor(ter2$FG, levels=c("FRG SP", "PSD SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
 str(ter2)
-
-
-str(ter2)
 summary(ter2$FG)
-#plot(ter$Terminal.Run ~ ter$Stock+ter$Year)
-
-#ter2<-ter %>%
-#  group_by(Stock,Year,Age) %>%
-#  summarise(Terminal = sum(Terminal.Run))
-
-ter2<-ter2 %>%
-  group_by(FG,Year,Age) %>%
-  summarise(Terminal = sum(Terminal.Run))
+ter2$Stock<-NULL
+ter3<-aggregate(.~Year+FG+Age, FUN=sum, data=ter2)
 
 
-str(ter2)
+#ter3$Age<-NULL
+ter3$Year<-as.integer(ter3$Year)
+str(ter3)
+view(ter3)
+
 # Stacked
 
-Term<-ggplot(ter2, aes(fill=Age, y=Terminal, x=Year)) + 
+Term<-ggplot(ter3, aes(fill=Age, y=Escapement, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Terminal Runs") +
@@ -106,36 +89,39 @@ Term
 ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "cm")
 
 
+
+################CATCH DATA##############################################
 #---Read in catch statistics----
-catch<-read_csv("Data/2021_07_catch_mortality_couture_v3.csv")
+catch<-read_csv("Data/2022_05_Couture_catch_mortality.csv")
 spec(catch)
 str(catch)
-catch$Stock<-as.factor(catch$Stock)
-catch$Fishery<-as.factor(catch$Fishery)
-catch$Year<-ymd(catch$Year, truncated =2L)
-catch$Age<-as.factor(catch$Age)
-catch$Total<-catch$Catch+catch$Shakers+catch$CNR.Legals+catch$CNR.Sublegals
-catch <- droplevels(catch[!catch$Fishery == 'TSF FS'&!catch$Fishery == 'TCENTRAL FS' & 
-                            !catch$Fishery == 'TNORTH'&!catch$Fishery == 'TWCVI FS'&
-                            !catch$Fishery == 'TFRASER FS'&!catch$Fishery == 'TGS FS'&
-                            !catch$Fishery == 'TPS FS',])
 
-str(datf)
-c<-table(catch$Fishery)#,catch$Age,df$FG.x)
-c<-as.data.frame(c)
-write_csv(c,"Data/Fisheries.csv") 
+catch<-subset(catch, select=-c(...1,FishNum, StockNum,Scaled.to.Observed.Catch, Model.Catch.to.Observed.Catch.Ratio,
+                               AEQ.Catch, AEQ.Shakers, AEQ.CNRSubLeg, AEQ.CNRLeg))
+unique(catch$Fishery)
 
 #----Remove Fisheries Outside of SRKW Summer Zone----
 
-catch<-subset(catch, Name!="George" & Name!="Andrea")
-selected<-c("WCVI T","WCVI N","WCVI ISBM S","WCVI AABM S",
-            "GEO ST S", "GEO ST T","J DE F N","PGSDN N",
-            "PGSDN S","PGSDO N", "PGSDO S") 
-catch<-catch[catch$Fishery %in% selected,]
+catch<-catch[(catch$Fishery!="ALASKA T"),]
+catch<-catch[(catch$Fishery!="ALASKA N"),]
+catch<-catch[(catch$Fishery!="TBC TBR FN"),]
+catch<-catch[(catch$Fishery!="TAK YAK N"),]
+catch<-catch[(catch$Fishery!="ALASKA S"),]
+catch<-catch[(catch$Fishery!="TAK TBR N"),]
+catch<-catch[(catch$Fishery!="TYK YAK FN"),]
+catch<-catch[(catch$Fishery!="TAK TBR S"),]
+catch$Fishery<-NULL
+#catch$Age<-NULL
+catch<-aggregate(.~Year+ Stock+Age, data=catch, FUN=sum)
+catch$X<-NULL
+str(catch)
+catch$Overall_Catch<-rowSums(catch[,(4:7)])
+catch2<-subset(catch, select=-c(Catch, Shakers, CNR.Legals, CNR.Sublegals))
+
 
 #----Combine catch data by group and year----
-str(catch)
-catch2<-catch %>%
+str(catch2)
+catch2<-catch2 %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG SP',
                         Stock == 'FSS' | Stock == 'FSO' ~ 'FRG SU',
                         Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
@@ -158,19 +144,20 @@ str(catch2)
 summary(catch2$FG)
 
 
-catch2<-catch2 %>%
-  group_by(Stock,Year,Age) %>%
-  summarise(Total = sum(Total))
+catch2$Stock<-NULL
+catch2$X<-NULL
+catch3<-aggregate(.~Year+FG+Age, FUN=sum, data=catch2)
+catch3$Age<-as.factor(catch3$Age)
+catch3$Year<-as.integer(catch3$Year)
+str(catch3)
+view(catch3)
 
-catch2<-catch2 %>%
-  group_by(FG, Year,Age) %>%
-  summarise(Total = sum(Total))
 
-Cat<-  ggplot(catch2, aes(fill=Age, y=Total, x=Year)) + 
+Cat<-  ggplot(catch3, aes(fill=Age, y=Overall_Catch, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Total Catch") +
-  facet_wrap(~Fishery ,scales="free_y") #+
+  facet_wrap(~FG ,scales="free_y") #+
 theme_ipsum() +
   theme(legend.position="none") +
   xlab("")  
@@ -181,20 +168,16 @@ Cat
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
 
 
+ 
+#----Create ID index for both dataframes---- 
+Adult_Spawner_Stanza<-ter%>%left_join(catch3)
+Adult_Spawner_Stanza$Abundance<-Adult_Spawner_Stanza$Escapement+Adult_Spawner_Stanza$Overall_Catch
+Adult_Spawner_Stanza$Biomass_t_km2<-(Adult_Spawner_Stanza$Abundance*ChinookW)/Area
+#Adult_Spawner_Stanza<-subset(Adult_Spawner_Stanza, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
-#----Create ID index for both dataframes----  
-catch2 <- cbind(ID = 1:nrow(catch2), catch2)    # Applying cbind function
-catch2$Type<-c("Fishery")                                      # Printing updated data
-ter2 <- cbind(ID = 1:nrow(ter2), ter2)    # Applying cbind function
-ter2$Type<-c("Terminal")  
 
-df<- full_join(ter2, catch2, by = 'ID')
-df
-df$Abund<-df$Terminal+df$Total
-df$catratio<-df$Total/df$Abund
-
-abund<- ggplot(df, aes(fill=Age.x, y=Abund, x=Year.x)) + 
+abund<- ggplot(Adult_Spawner_Stanza, aes(fill=Age.x, y=Abund, x=Year.x)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Abunance") +
