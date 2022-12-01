@@ -32,7 +32,7 @@ library(viridis)
 font_add_google("Lato")
 showtext_auto()
 
-Area=242623
+Area=78000
 ChinookW=8.5/1000
 
 #----Read in terminal estimate data ---- 
@@ -170,23 +170,28 @@ ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units =
 
  
 #----Create ID index for both dataframes---- 
-Adult_Spawner_Stanza<-ter%>%left_join(catch3)
+Adult_Spawner_Stanza<-ter3%>%left_join(catch3)
 Adult_Spawner_Stanza$Abundance<-Adult_Spawner_Stanza$Escapement+Adult_Spawner_Stanza$Overall_Catch
 Adult_Spawner_Stanza$Biomass_t_km2<-(Adult_Spawner_Stanza$Abundance*ChinookW)/Area
 #Adult_Spawner_Stanza<-subset(Adult_Spawner_Stanza, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
 
-abund<- ggplot(Adult_Spawner_Stanza, aes(fill=Age.x, y=Abund, x=Year.x)) + 
+abund<- ggplot(Adult_Spawner_Stanza, aes(fill=Age, y=Biomass_t_km2, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Abunance") +
-  facet_wrap(~FG.x, scales="free_y") #+
+  facet_wrap(~FG, scales="free_y") #+
 theme_ipsum() +
   theme(legend.position="none") +
   xlab("")
 
 abund
+
+
+Biomass<-subset(Adult_Spawner_Stanza, Year=="1979")
+write_csv(Biomass,"OUTPUTS/Biomass.csv")
+
 
 ggarrange(Term,Cat,abund,                                       # First row with scatter plot
           ncol = 1, labels = c("A","B", "C"), # Second row with box and dot plots
