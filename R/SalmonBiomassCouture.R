@@ -147,9 +147,11 @@ Cat
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
 
 #----Create ID index for both dataframes---- 
-Adult_Spawner_Stanza<-ter%>%left_join(catch3)
+Adult_Spawner_Stanza<-ter3%>%left_join(catch3)
 Adult_Spawner_Stanza$Abundance<-Adult_Spawner_Stanza$Escapement+Adult_Spawner_Stanza$Overall_Catch
 Adult_Spawner_Stanza$Biomass_t_km2<-(Adult_Spawner_Stanza$Abundance*ChinookW)/Area
+Adult_Spawner_Stanza$Catch_t_km2<-(Adult_Spawner_Stanza$Overall_Catch*ChinookW)/Area
+Adult_Spawner_Stanza$Fishing_Mortality<-Adult_Spawner_Stanza$Catch_t_km2/Adult_Spawner_Stanza$Biomass_t_km2
 #Adult_Spawner_Stanza<-subset(Adult_Spawner_Stanza, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
