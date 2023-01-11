@@ -72,7 +72,7 @@ ter3<-aggregate(.~Year+FG+Age, FUN=sum, data=ter2)
 #ter3$Age<-NULL
 ter3$Year<-as.integer(ter3$Year)
 str(ter3)
-view(ter3)
+#view(ter3)
 
 # Stacked
 
@@ -148,7 +148,7 @@ catch3<-aggregate(.~Year+FG+Age, FUN=sum, data=catch2)
 catch3$Age<-as.factor(catch3$Age)
 catch3$Year<-as.integer(catch3$Year)
 str(catch3)
-view(catch3)
+#view(catch3)
 
 
 Cat<-  ggplot(catch3, aes(fill=Age, y=Overall_Catch, x=Year)) + 
@@ -264,21 +264,32 @@ ggsave(Cat,file="OUTPUTS/ChinookTotalFM.png",width = 28, height = 12, units = "c
 
  
 #----Create ID index for both dataframes---- 
-Adult_Spawner_Stanza<-ter3%>%left_join(catch3)
-Adult_Spawner_Stanza<-Adult_Spawner_Stanza%>%left_join(FM3)
-Adult_Spawner_Stanza$Abundance<-Adult_Spawner_Stanza$Escapement+Adult_Spawner_Stanza$Overall_Catch
-Adult_Spawner_Stanza$Biomass_t_km2<-(Adult_Spawner_Stanza$Abundance*ChinookW)/Area
-Adult_Spawner_Stanza$Catch_t_km2<-(Adult_Spawner_Stanza$Overall_Catch*ChinookW)/Area
-Adult_Spawner_Stanza$Fishing_Mortality<-Adult_Spawner_Stanza$Catch_t_km2/Adult_Spawner_Stanza$Biomass_t_km2
-Adult_Spawner_Stanza$Catch_t_km2_NFW<-(Adult_Spawner_Stanza$Overall_FM*ChinookW)/Area
-Adult_Spawner_Stanza$Fishing_Mortality_NFW<-Adult_Spawner_Stanza$Catch_t_km2_NFW/Adult_Spawner_Stanza$Biomass_t_km2
-Adult_Spawner_Stanza$Fishing_Mortality_Rate<-Adult_Spawner_Stanza$Fishing_Mortality_NFW*Adult_Spawner_Stanza$Biomass_t_km2
-#Adult_Spawner_Stanza<-subset(Adult_Spawner_Stanza, select=c(Year, FG, Abundance, Biomass_t_km2))
+Salmon_Biomass<-ter3%>%left_join(catch3)
+Salmon_Biomass<-Salmon_Biomass%>%left_join(FM3)
+Salmon_Biomass$Abundance<-Salmon_Biomass$Escapement+Salmon_Biomass$Overall_Catch
+unique(Salmon_Biomass$Age)
+str(Salmon_Biomass)
+Salmon_Biomass<-Salmon_Biomass %>%
+  mutate(Weight=case_when(Age==2 ~ 4.086,
+                          Age==3 ~ 6.777,
+                          Age==4 ~ 8.854,
+                          Age==5 ~ 10.589))
+
+str(Salmon_Biomass)
+Salmon_Biomass$Biomass_t<-(Salmon_Biomass$Abundance*Salmon_Biomass$Weight)/1000
+
+Salmon_Biomass$Biomass_t_km2<-Salmon_Biomass$Biomass/Area
+Salmon_Biomass$Catch_t_km2<-(Salmon_Biomass$Overall_Catch*Salmon_Biomass$Weight)/1000/Area
+Salmon_Biomass$Fishing_Mortality<-Salmon_Biomass$Catch_t_km2/Salmon_Biomass$Biomass_t_km2
+Salmon_Biomass$Catch_t_km2_NFW<-(Salmon_Biomass$Overall_FM*Salmon_Biomass$Weight)/1000/Area
+Salmon_Biomass$Fishing_Mortality_NFW<-Salmon_Biomass$Catch_t_km2_NFW/Salmon_Biomass$Biomass_t_km2
+Salmon_Biomass$Fishing_Mortality_Rate<-Salmon_Biomass$Fishing_Mortality_NFW*Salmon_Biomass$Biomass_t_km2
+#Salmon_Biomass<-subset(Salmon_Biomass, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
 
 
-abund<- ggplot(Adult_Spawner_Stanza, aes(fill=Age, y=Biomass_t_km2, x=Year)) + 
+abund<- ggplot(Salmon_Biomass, aes(fill=Age, y=Biomass_t_km2, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Abunance") +
@@ -289,8 +300,8 @@ abund<- ggplot(Adult_Spawner_Stanza, aes(fill=Age, y=Biomass_t_km2, x=Year)) +
 
 abund
 
-write_csv(Adult_Spawner_Stanza,"OUTPUTS/Biomass.csv")
-Biomass<-subset(Adult_Spawner_Stanza, Year=="1979")
+write_csv(Salmon_Biomass,"OUTPUTS/Chinook_Parameters.csv")
+Biomass<-subset(Salmon_Biomass, Year=="1979")
 write_csv(Biomass,"OUTPUTS/Biomass.csv")
 
 
