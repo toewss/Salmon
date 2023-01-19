@@ -10,10 +10,10 @@ library(ggpubr)
 library(lubridate)
 library(here)
 Area=242623
+Area=176000
 
-
-setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Salmon smolts/RMIS - Hatchery release data/RMIS Query 5 - Regional refined + Brood year/")
-Overall_Dataset<-read.csv("Data/Overall Query all species all seasons.csv")
+#setwd("C:/Users/fannyc64/Sync/Chapters/Chapter 1 - Ewe/Model/Data/Salmon smolts/RMIS - Hatchery release data/RMIS Query 5 - Regional refined + Brood year/")
+Overall_Dataset<-read.csv("Data/Hatchery/Overall Query all species all seasons.csv")
 Overall_Dataset<-Overall_Dataset[Overall_Dataset$release_location_rmis_basin %in% c("JSM","JSVI","SWVI","GSMN","GSMS","GSVI","UPFR",
 "LOFR","LOTR","UPTR","NOOK","BESA","SJUA",
 "LOSK","UPSK","WICI","STIL","SNOH","EKPN",
@@ -50,13 +50,13 @@ CohoWSmolt=0.0746
 Coho_Dataset$Biomass_t_km2<-((Coho_Dataset$All_Releases*CohoWSmolt)/1000)/Area
 Coho_Ecopath<-Coho_Dataset$Biomass_t_km2[1]
 Coho_Dataset$Relative_Biomass_Ecopath<-Coho_Dataset$Biomass_t_km2/Coho_Ecopath
-#write.csv(Coho_Dataset, "Coho hatchery releases per year.csv")
+write.csv(Coho_Dataset, "Data/Hatchery/Coho hatchery releases per year.csv")
 # Loop for entering in recruitment function in Ecopath
 
 Months<-rep(c("Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"), times=42)
 Coho_Dataset <- Coho_Dataset[rep(seq_len(nrow(Coho_Dataset)), each = 12),]
 Coho_Dataset$Months<-Months
-#write.csv(Coho_Dataset,"Coho hatchery M5.csv")
+write.csv(Coho_Dataset,"Data/Hatchery/Coho hatchery M5.csv")
 
 ################################################## CHUM SALMON
 
@@ -68,12 +68,12 @@ ChumSmoltW<-0.0254 #(from Beamish et al. 2012 again)
 Chum_Dataset$Biomass_t_km2<-((Chum_Dataset$All_Releases*ChumSmoltW)/1000)/Area
 Chum_Ecopath<-Chum_Dataset$Biomass_t_km2[1]
 Chum_Dataset$Relative_Biomass_Ecopath<-Chum_Dataset$Biomass_t_km2/Chum_Ecopath
-write.csv(Chum_Dataset, "Chum hatchery releases per year.csv")
+write.csv(Chum_Dataset, "Data/Hatchery/Chum hatchery releases per year.csv")
 # Loop for entering in recruitment function in Ecopath
 
 Chum_Dataset <- Chum_Dataset[rep(seq_len(nrow(Chum_Dataset)), each = 12),]
 Chum_Dataset$Months<-Months
-#write.csv(Chum_Dataset,"Chum hatchery M5.csv")
+write.csv(Chum_Dataset,"Data/Hatchery/Chum hatchery M5.csv")
 
 
 ################################################## CHINOOK SALMON (7 GROUPS)
@@ -81,13 +81,15 @@ Chum_Dataset$Months<-Months
 
 
 ChinookS_W<-0.038
-Chinook_Dataset$Functional_Group_Region<-ifelse(Chinook_Dataset$release_location_rmis_region%in%c("WCVI"),"WCVI",
-                                                ifelse(Chinook_Dataset$release_location_rmis_region%in%c("FRTH","JNST","GST","NOWA","SKAG","NPS","MPS","SPS","HOOD","JUAN"),"FRGSPS",
-                                                       ifelse(Chinook_Dataset$release_location_rmis_region%in%c("NWC","GRAY","WILP","NOOR","SOOR","UPCR","SNAK","CECR","LOCR","SAFA","NOCA","KLTR"), "CRWORC", "OTHER")))
-
-
-
-
+Chinook_Dataset$Functional_Group_Region<-ifelse(Chinook_Dataset$release_location_rmis_region%in%c("WCVI"),"WVI",
+                                                ifelse(Chinook_Dataset$release_location_rmis_region%in%c("FRTH"),"FRG",
+                                                       ifelse(Chinook_Dataset$release_location_rmis_region%in%c("GST","JNST","JUAN"),"GST",
+                                                              ifelse(Chinook_Dataset$release_location_rmis_region%in%c("NOWA", "SKAG","NPS","MPS","SPS","HOOD"),"PSD",
+                                                                     ifelse(Chinook_Dataset$release_location_rmis_region%in%c("CECR", "LOCR","SNAK","UPCR"),"COL",
+                                                                            ifelse(Chinook_Dataset$release_location_rmis_region%in%c("NWC","GRAY","WILP"),"WAC",
+                                                                                ifelse(Chinook_Dataset$release_location_rmis_region%in%c("NOOR","SOOR","SAFA","NOCA","KLTR"), "CAO", "OTHER")))))))
+                                                              
+                                                              
 
 
 Chinook_Dataset<-Chinook_Dataset%>%filter(!(Chinook_Dataset$release_location_rmis_region=="CECA" & Chinook_Dataset$run==1))
@@ -113,68 +115,104 @@ Chinook_Dataset$Biomass_t_km2<-((Chinook_Dataset$All_Releases*ChinookS_W)/1000)/
 Chinook_Dataset<-Chinook_Dataset[Chinook_Dataset$brood_year!=1977,]
 Chinook_Dataset<-Chinook_Dataset[Chinook_Dataset$brood_year!=1978,]
 
-####FRGSPS_SP
-FRGSPS_SP<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="FRGSPS" & Chinook_Dataset$run==1,]
-FRGSPS_SP_Ecopath<-FRGSPS_SP$Biomass_t_km2[1]
-FRGSPS_SP$Relative_Biomass_Ecopath<-FRGSPS_SP$Biomass_t_km2/FRGSPS_SP_Ecopath
-#write.csv(FRGSPS_SP, "FRGSPS SP hatchery releases per year.csv")
+####FRG_SP
+FRG_SP<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="FRG" & Chinook_Dataset$run==1,]
+FRG_SP_Ecopath<-FRG_SP$Biomass_t_km2[1]
+FRG_SP$Relative_Biomass_Ecopath<-FRG_SP$Biomass_t_km2/FRG_SP_Ecopath
+write.csv(FRG_SP, "OUTPUT/Hatchery/FRG SP hatchery releases per year.csv")
 
-FRGSPS_SP <- FRGSPS_SP[rep(seq_len(nrow(FRGSPS_SP)), each = 12),]
+FRG_SP <- FRG_SP[rep(seq_len(nrow(FRG_SP)), each = 12),]
 MonthsFRSP<-rep(c("Jan","Feb","Mar","Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"), times=41)
 
-FRGSPS_SP$Months<-MonthsFRSP
-#write.csv(FRGSPS_SP,"FRGSPS_SP M5.csv")
+FRG_SP$Months<-MonthsFRSP
+write.csv(FRG_SP,"OUTPUT/Hatchery/FRG_SP M5.csv")
 
-####FRGSPS_SU
-FRGSPS_SU<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="FRGSPS" & Chinook_Dataset$run==2,]
-FRGSPS_SU_Ecopath<-FRGSPS_SU$Biomass_t_km2[1]
-FRGSPS_SU$Relative_Biomass_Ecopath<-FRGSPS_SU$Biomass_t_km2/FRGSPS_SU_Ecopath
-write.csv(FRGSPS_SU, "FRGSPS SU hatchery releases per year.csv")
-FRGSPS_SU <- FRGSPS_SU[rep(seq_len(nrow(FRGSPS_SU)), each = 12),]
-FRGSPS_SU$Months<-MonthsFRSP
-#write.csv(FRGSPS_SU,"FRGSPS_SU M5.csv")
+####FRG_SU
+FRG_SU<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="FRG" & Chinook_Dataset$run==2,]
+FRG_SU_Ecopath<-FRG_SU$Biomass_t_km2[1]
+FRG_SU$Relative_Biomass_Ecopath<-FRG_SU$Biomass_t_km2/FRG_SU_Ecopath
+write.csv(FRG_SU, "OUTPUT/Hatchery/FRG SU hatchery releases per year.csv")
+FRG_SU <- FRG_SU[rep(seq_len(nrow(FRG_SU)), each = 12),]
+FRG_SU$Months<-MonthsFRSP
+write.csv(FRG_SU,"OUTPUT/Hatchery/FRG_SU M5.csv")
 
-####FRGSPS_FA
-FRGSPS_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="FRGSPS" & Chinook_Dataset$run==3,]
-FRGSPS_FA_Ecopath<-FRGSPS_FA$Biomass_t_km2[1]
-FRGSPS_FA$Relative_Biomass_Ecopath<-FRGSPS_FA$Biomass_t_km2/FRGSPS_FA_Ecopath
-write.csv(FRGSPS_FA, "FRGSPS FA hatchery releases per year.csv")
-FRGSPS_FA <- FRGSPS_FA[rep(seq_len(nrow(FRGSPS_FA)), each = 12),]
-FRGSPS_FA$Months<-MonthsFRSP
-#write.csv(FRGSPS_FA,"FRGSPS_FA M5.csv")
+####FRG_FA
+FRG_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="FRG" & Chinook_Dataset$run==3,]
+FRG_FA_Ecopath<-FRG_FA$Biomass_t_km2[1]
+FRG_FA$Relative_Biomass_Ecopath<-FRG_FA$Biomass_t_km2/FRG_FA_Ecopath
+write.csv(FRG_FA, "OUTPUT/Hatchery/FRG FA hatchery releases per year.csv")
+FRG_FA <- FRG_FA[rep(seq_len(nrow(FRG_FA)), each = 12),]
+FRG_FA$Months<-MonthsFRSP
+write.csv(FRG_FA,"OUTPUT/Hatchery/FRG_FA M5.csv")
 
-# CRWORC_SP
-CRWORC_SP<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="CRWORC" & Chinook_Dataset$run==1,]
-CRWORC_SP_Ecopath<-CRWORC_SP$Biomass_t_km2[1]
-CRWORC_SP$Relative_Biomass_Ecopath<-CRWORC_SP$Biomass_t_km2/CRWORC_SP_Ecopath
-write.csv(CRWORC_SP, "CRWORC SP hatchery releases per year.csv")
-CRWORC_SP <- CRWORC_SP[rep(seq_len(nrow(CRWORC_SP)), each = 12),]
-CRWORC_SP$Months<-MonthsFRSP
-write.csv(CRWORC_SP,"CRWORC_SP M5.csv")
+####GST_FA
+GST_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="GST" & Chinook_Dataset$run==3,]
+GST_FA_Ecopath<-GST_FA$Biomass_t_km2[1]
+GST_FA$Relative_Biomass_Ecopath<-GST_FA$Biomass_t_km2/GST_FA_Ecopath
+write.csv(GST_FA, "OUTPUT/Hatchery/GST FA hatchery releases per year.csv")
+GST_FA <- GST_FA[rep(seq_len(nrow(GST_FA)), each = 12),]
+GST_FA$Months<-MonthsFRSP
+write.csv(GST_FA,"OUTPUT/Hatchery/GST_FA M5.csv")
 
-#CRWORC_SU
-CRWORC_SU<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="CRWORC" & Chinook_Dataset$run==2,]
-CRWORC_SU_Ecopath<-CRWORC_SU$Biomass_t_km2[1]
-CRWORC_SU$Relative_Biomass_Ecopath<-CRWORC_SU$Biomass_t_km2/CRWORC_SU_Ecopath
-write.csv(CRWORC_SU, "CRWORC SU hatchery releases per year.csv")
-CRWORC_SU <- CRWORC_SU[rep(seq_len(nrow(CRWORC_SU)), each = 12),]
-CRWORC_SU$Months<-MonthsFRSP
-write.csv(CRWORC_SU,"CRWORC_SU M5.csv")
+# COL_SP
+COL_SP<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="COL" & Chinook_Dataset$run==1,]
+COL_SP_Ecopath<-COL_SP$Biomass_t_km2[1]
+COL_SP$Relative_Biomass_Ecopath<-COL_SP$Biomass_t_km2/COL_SP_Ecopath
+write.csv(COL_SP, "OUTPUT/Hatchery/COL SP hatchery releases per year.csv")
+COL_SP <- COL_SP[rep(seq_len(nrow(COL_SP)), each = 12),]
+COL_SP$Months<-MonthsFRSP
+write.csv(COL_SP,"OUTPUT/Hatchery/COL_SP M5.csv")
 
-#CRWORC_FA
-CRWORC_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="CRWORC" & Chinook_Dataset$run==3,]
-CRWORC_FA_Ecopath<-CRWORC_FA$Biomass_t_km2[1]
-CRWORC_FA$Relative_Biomass_Ecopath<-CRWORC_FA$Biomass_t_km2/CRWORC_FA_Ecopath
-write.csv(CRWORC_FA, "CRWORC FA hatchery releases per year.csv")
-CRWORC_FA <- CRWORC_FA[rep(seq_len(nrow(CRWORC_FA)), each = 12),]
-CRWORC_FA$Months<-MonthsFRSP
-write.csv(CRWORC_FA,"CRWORC_FA M5.csv")
+#COL_SU
+COL_SU<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="COL" & Chinook_Dataset$run==2,]
+COL_SU_Ecopath<-COL_SU$Biomass_t_km2[1]
+COL_SU$Relative_Biomass_Ecopath<-COL_SU$Biomass_t_km2/COL_SU_Ecopath
+write.csv(COL_SU, "OUTPUT/Hatchery/COL SU hatchery releases per year.csv")
+COL_SU <- COL_SU[rep(seq_len(nrow(COL_SU)), each = 12),]
+COL_SU$Months<-MonthsFRSP
+write.csv(COL_SU,"OUTPUT/Hatchery/COL_SU M5.csv")
+
+#COL_FA
+COL_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="COL" & Chinook_Dataset$run==3,]
+COL_FA_Ecopath<-COL_FA$Biomass_t_km2[1]
+COL_FA$Relative_Biomass_Ecopath<-COL_FA$Biomass_t_km2/COL_FA_Ecopath
+write.csv(COL_FA, "OUTPUT/Hatchery/COL FA hatchery releases per year.csv")
+COL_FA <- COL_FA[rep(seq_len(nrow(COL_FA)), each = 12),]
+COL_FA$Months<-MonthsFRSP
+write.csv(COL_FA,"OUTPUT/Hatchery/COL_FA M5.csv")
+
+#PSD_FA
+PSD_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="PSD" & Chinook_Dataset$run==3,]
+PSD_FA_Ecopath<-PSD_FA$Biomass_t_km2[1]
+PSD_FA$Relative_Biomass_Ecopath<-PSD_FA$Biomass_t_km2/PSD_FA_Ecopath
+write.csv(PSD_FA, "OUTPUT/Hatchery/PSD FA hatchery releases per year.csv")
+PSD_FA <- PSD_FA[rep(seq_len(nrow(PSD_FA)), each = 12),]
+PSD_FA$Months<-MonthsFRSP
+write.csv(PSD_FA,"OUTPUT/Hatchery/PSD_FA M5.csv")
+
+#WAC_FA
+WAC_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="WAC" & Chinook_Dataset$run==3,]
+WAC_FA_Ecopath<-WAC_FA$Biomass_t_km2[1]
+WAC_FA$Relative_Biomass_Ecopath<-WAC_FA$Biomass_t_km2/WAC_FA_Ecopath
+write.csv(WAC_FA, "OUTPUT/Hatchery/WAC FA hatchery releases per year.csv")
+WAC_FA <- WAC_FA[rep(seq_len(nrow(WAC_FA)), each = 12),]
+WAC_FA$Months<-MonthsFRSP
+write.csv(WAC_FA,"OUTPUT/Hatchery/WAC_FA M5.csv")
+
+#CAO_FA
+CAO_FA<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="CAO" & Chinook_Dataset$run==3,]
+CAO_FA_Ecopath<-CAO_FA$Biomass_t_km2[1]
+CAO_FA$Relative_Biomass_Ecopath<-CAO_FA$Biomass_t_km2/CAO_FA_Ecopath
+write.csv(CAO_FA, "OUTPUT/Hatchery/CAO FA hatchery releases per year.csv")
+CAO_FA <- CAO_FA[rep(seq_len(nrow(CAO_FA)), each = 12),]
+CAO_FA$Months<-MonthsFRSP
+write.csv(CAO_FA,"OUTPUT/Hatchery/CAO_FA M5.csv")
 
 #WCVI
 WCVI<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="WCVI" ,]
 WCVI_Ecopath<-WCVI$Biomass_t_km2[1]
 WCVI$Relative_Biomass_Ecopath<-WCVI$Biomass_t_km2/WCVI_Ecopath
-write.csv(WCVI, "WCVI hatchery releases per year.csv")
+write.csv(WCVI, "OUTPUT/Hatchery/WCVI hatchery releases per year.csv")
 WCVI <- WCVI[rep(seq_len(nrow(WCVI)), each = 12),]
 WCVI$Months<-MonthsFRSP
-write.csv(WCVI,"WCVI M5.csv")
+write.csv(WCVI,"OUTPUT/Hatchery/WCVI M5.csv")

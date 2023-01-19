@@ -80,10 +80,10 @@ Term<-ggplot(ter3, aes(fill=Age, y=Escapement, x=Year)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Terminal Runs") +
-  facet_wrap(~FG,scales="free_y") #+
-#theme_ipsum() +
-#  theme(legend.position="none") +
-#  xlab("")
+  facet_wrap(~FG)#,scales="free_y") #+
+theme_ipsum() +
+  theme(legend.position="none") +
+  xlab("")
 Term
 ggsave(Term,file="OUTPUTS/ChinookTermRun.png",width = 28, height = 12, units = "cm")
 
@@ -155,10 +155,10 @@ Cat<-  ggplot(catch3, aes(fill=Age, y=Overall_Catch, x=Year)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Total Catch") +
-  facet_wrap(~FG ,scales="free_y") #+
-#theme_ipsum() +
-#  theme(legend.position="none") +
-#  xlab("")  
+  facet_wrap(~FG)# ,scales="free_y") #+
+theme_ipsum() +
+  theme(legend.position="none") +
+  xlab("")  
 
 Cat  
 
@@ -293,10 +293,10 @@ abund<- ggplot(Salmon_Biomass, aes(fill=Age, y=Biomass_t_km2, x=Year)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Abunance") +
-  facet_wrap(~FG)#, scales="free_y") #+
-#theme_ipsum() +
-#  theme(legend.position="none") +
-#  xlab("")
+  facet_wrap(~FG)+#, scales="free_y") #+
+  theme_ipsum() +
+  theme(legend.position="none") +
+  xlab("")
 
 abund
 
