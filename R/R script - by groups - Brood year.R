@@ -209,10 +209,10 @@ CAO_FA$Months<-MonthsFRSP
 write.csv(CAO_FA,"OUTPUT/Hatchery/CAO_FA M5.csv")
 
 #WCVI
-WCVI<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="WCVI" ,]
+WCVI<-Chinook_Dataset[Chinook_Dataset$Functional_Group_Region=="WVI"& Chinook_Dataset$run==3 ,]
 WCVI_Ecopath<-WCVI$Biomass_t_km2[1]
 WCVI$Relative_Biomass_Ecopath<-WCVI$Biomass_t_km2/WCVI_Ecopath
-write.csv(WCVI, "OUTPUT/Hatchery/WCVI hatchery releases per year.csv")
+write.csv(WCVI, "OUTPUTS/Hatchery/WCVI hatchery releases per year.csv")
 WCVI <- WCVI[rep(seq_len(nrow(WCVI)), each = 12),]
 WCVI$Months<-MonthsFRSP
-write.csv(WCVI,"OUTPUT/Hatchery/WCVI M5.csv")
+write.csv(WCVI,"OUTPUTS/Hatchery/WCVI M5.csv")

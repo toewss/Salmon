@@ -51,8 +51,8 @@ ter2<-ter %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG SP',
                         Stock == 'FSS' | Stock == 'FSO' ~ 'FRG SU',
                         Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
-                        Stock == 'MGS'  ~ 'GST NO',
-                        Stock == 'LGS' ~ 'GST LO',
+                        Stock == 'MGS' | Stock =="LGS" ~ 'GST FA',
+                        #Stock == 'LGS' ~ 'GST LO',
                         Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'NKS'  ~ 'PSD FA',
                         Stock == 'WVN' | Stock == 'WVH' ~ 'WCV FA',
                         Stock == 'NOC'  ~ 'CAO FA',
@@ -62,7 +62,7 @@ ter2<-ter %>%
                         Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
 
 ter2$FG<-as.factor((ter2$FG))
-ter2$FG <-factor(ter2$FG, levels=c("FRG SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
+ter2$FG <-factor(ter2$FG, levels=c("FRG SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST FA","PSD FA","WCV FA","WAC FA","CAO FA" ))
 str(ter2)
 summary(ter2$FG)
 ter2$Stock<-NULL
@@ -80,7 +80,7 @@ Term<-ggplot(ter3, aes(fill=Age, y=Escapement, x=Year)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Terminal Runs") +
-  facet_wrap(~FG)#,scales="free_y") #+
+  facet_wrap(~FG)+#,scales="free_y") #+
 theme_ipsum() +
   theme(legend.position="none") +
   xlab("")
@@ -124,8 +124,8 @@ catch2<-catch2 %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG SP',
                         Stock == 'FSS' | Stock == 'FSO' ~ 'FRG SU',
                         Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
-                        Stock == 'MGS'  ~ 'GST NO',
-                        Stock == 'LGS' ~ 'GST LO',
+                        Stock == 'MGS' | Stock =="LGS" ~ 'GST FA',
+                        #Stock == 'LGS' ~ 'GST LO',
                         Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'NKS'  ~ 'PSD FA',
                         Stock == 'WVN' | Stock == 'WVH' ~ 'WCV FA',
                         Stock == 'NOC'  ~ 'CAO FA',
@@ -135,7 +135,7 @@ catch2<-catch2 %>%
                         Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
 str(catch2)
 catch2$FG<-as.factor((catch2$FG))
-catch2$FG <-factor(catch2$FG, levels=c("FRG SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
+catch2$FG <-factor(catch2$FG, levels=c("FRG SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST FA","PSD FA","WCV FA","WAC FA","CAO FA" ))
 str(catch2)
 
 str(catch2)
@@ -155,13 +155,12 @@ Cat<-  ggplot(catch3, aes(fill=Age, y=Overall_Catch, x=Year)) +
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Total Catch") +
-  facet_wrap(~FG)# ,scales="free_y") #+
+  facet_wrap(~FG)+# ,scales="free_y") #+
 theme_ipsum() +
   theme(legend.position="none") +
   xlab("")  
 
 Cat  
-
 
 ggsave(Cat,file="OUTPUTS/ChinookTotalCatch.png",width = 28, height = 12, units = "cm")
 
@@ -220,8 +219,8 @@ FM2<-FM2 %>%
   mutate(FG = case_when(Stock == 'FS2' | Stock == 'FS3' ~ 'FRG SP',
                         Stock == 'FSS' | Stock == 'FSO' ~ 'FRG SU',
                         Stock == 'FCF' | Stock == 'FHF' ~ 'FRG FA',
-                        Stock == 'MGS'  ~ 'GST NO',
-                        Stock == 'LGS' ~ 'GST LO',
+                        Stock == 'MGS' | Stock =="LGS" ~ 'GST FA',
+                        #Stock == 'LGS' ~ 'GST LO',
                         Stock == 'NKF' | Stock == 'PSY'|Stock == 'PSN'|Stock == 'PSF'|Stock == 'SKG'|Stock == 'SNO'|Stock == 'STL'|Stock == 'NKS'  ~ 'PSD FA',
                         Stock == 'WVN' | Stock == 'WVH' ~ 'WCV FA',
                         Stock == 'NOC'  ~ 'CAO FA',
@@ -231,7 +230,7 @@ FM2<-FM2 %>%
                         Stock == 'CWS' | Stock == 'WSH' ~ 'COR SP'))
 str(FM2)
 FM2$FG<-as.factor((FM2$FG))
-FM2$FG <-factor(FM2$FG, levels=c("FRG SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST NO","GST LO","PSD FA","WCV FA","WAC FA","CAO FA" ))
+FM2$FG <-factor(FM2$FG, levels=c("FRG SP", "COR SP","FRG SU","COR SU", "FRG FA","COR FA", "GST FA","PSD FA","WCV FA","WAC FA","CAO FA" ))
 str(FM2)
 
 str(FM2)
@@ -244,17 +243,17 @@ FM3<-aggregate(.~Year+FG+Age, FUN=sum, data=FM2)
 FM3$Age<-as.factor(FM3$Age)
 FM3$Year<-as.integer(FM3$Year)
 str(FM3)
-view(FM3)
+#view(FM3)
 
 
 Cat<-  ggplot(FM3, aes(fill=Age, y=Overall_FM, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
   ggtitle("Chinook Total Catch") +
-  facet_wrap(~FG ,scales="free_y") #+
-#theme_ipsum() +
-#  theme(legend.position="none") +
-#  xlab("")  
+  facet_wrap(~FG )+#,scales="free_y")+
+  theme_ipsum() +
+  theme(legend.position="none") +
+  xlab("")  
 
 Cat  
 
@@ -287,8 +286,6 @@ Salmon_Biomass$Fishing_Mortality_Rate<-Salmon_Biomass$Fishing_Mortality_NFW*Salm
 #Salmon_Biomass<-subset(Salmon_Biomass, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
-
-
 abund<- ggplot(Salmon_Biomass, aes(fill=Age, y=Biomass_t_km2, x=Year)) + 
   geom_bar(position="stack", stat="identity")+
   scale_fill_viridis(discrete = T, option = "E") +
@@ -301,8 +298,32 @@ abund<- ggplot(Salmon_Biomass, aes(fill=Age, y=Biomass_t_km2, x=Year)) +
 abund
 
 write_csv(Salmon_Biomass,"OUTPUTS/Chinook_Parameters.csv")
-Biomass<-subset(Salmon_Biomass, Year=="1979")
-write_csv(Biomass,"OUTPUTS/Biomass.csv")
+
+Initial_Biomass<-subset(Salmon_Biomass, Year=="1979"& Age=="4")
+
+Salmon_Biomass_4<-subset(Salmon_Biomass, Age=="4")
+
+
+str(Initial_Biomass)
+str(Salmon_Biomass_4)
+Salmon_Biomass_4$RelativeBiomass <- Salmon_Biomass_4$Biomass_t_km2/ Initial_Biomass$Biomass_t_km2[ match( Salmon_Biomass_4$FG , Initial_Biomass$FG ) ]
+
+write_csv(Salmon_Biomass_4,"OUTPUTS/Salmon_Biomass_4.csv")
+
+
+Salmon_Biomass$Group <- paste(Salmon_Biomass$FG, Salmon_Biomass$Age, sep="_")
+str(Salmon_Biomass)
+
+Salmon_BiomassAg<-aggregate(.~brood_year, FUN = sum, data=Chum_Dataset)
+
+  
+####FRG_SP
+FRG_SP<-SalmonBiomass[Salmon_Biomass$FG=="FRG" & Chinook_Dataset$run==1,]
+FRG_SP_Ecopath<-FRG_SP$Biomass_t_km2[1]
+FRG_SP$Relative_Biomass_Ecopath<-FRG_SP$Biomass_t_km2/FRG_SP_Ecopath
+write.csv(FRG_SP, "OUTPUT/Hatchery/FRG SP hatchery releases per year.csv")
+
+
 
 
 ggarrange(Term,Cat,abund,                                       # First row with scatter plot
