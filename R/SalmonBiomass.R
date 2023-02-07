@@ -282,7 +282,7 @@ Salmon_Biomass$Catch_t_km2<-(Salmon_Biomass$Overall_Catch*Salmon_Biomass$Weight)
 Salmon_Biomass$Fishing_Mortality<-Salmon_Biomass$Catch_t_km2/Salmon_Biomass$Biomass_t_km2
 Salmon_Biomass$Catch_t_km2_NFW<-(Salmon_Biomass$Overall_FM*Salmon_Biomass$Weight)/1000/Area
 Salmon_Biomass$Fishing_Mortality_NFW<-Salmon_Biomass$Catch_t_km2_NFW/Salmon_Biomass$Biomass_t_km2
-Salmon_Biomass$Fishing_Mortality_Rate<-Salmon_Biomass$Fishing_Mortality_NFW*Salmon_Biomass$Biomass_t_km2
+Salmon_Biomass$Fishing_Landings<-Salmon_Biomass$Fishing_Mortality_NFW*Salmon_Biomass$Biomass_t_km2
 #Salmon_Biomass<-subset(Salmon_Biomass, select=c(Year, FG, Abundance, Biomass_t_km2))
 
 
