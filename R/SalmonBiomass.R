@@ -33,7 +33,7 @@ font_add_google("Lato")
 showtext_auto()
 
 Area=176000
-ChinookW=8.5/1000
+#ChinookW=8.5/1000
 
 #----Read in terminal estimate data ---- 
 ter<-read_csv("Data/2022_5_Couture_cohort_escapement.csv")
@@ -114,7 +114,7 @@ catch$Fishery<-NULL
 catch<-aggregate(.~Year+ Stock+Age, data=catch, FUN=sum)
 catch$X<-NULL
 str(catch)
-catch$Overall_Catch<-rowSums(catch[,(4:7)])
+catch$Overall_Catch<-rowSums(catch[,(3:7)])
 catch2<-subset(catch, select=-c(Catch, Shakers, CNR.Legals, CNR.Sublegals))
 
 
@@ -209,7 +209,7 @@ FM$Fishery<-NULL
 FM<-aggregate(.~Year+ Stock+Age, data=FM, FUN=sum)
 FM$X<-NULL
 str(FM)
-FM$Overall_FM<-rowSums(FM[,(4:7)])
+FM$Overall_FM<-rowSums(FM[,(3:7)])
 FM2<-subset(FM, select=-c(Catch, Shakers, CNR.Legals, CNR.Sublegals))
 
 
@@ -269,9 +269,9 @@ Salmon_Biomass$Abundance<-Salmon_Biomass$Escapement2+Salmon_Biomass$Overall_Catc
 unique(Salmon_Biomass$Age)
 str(Salmon_Biomass)
 Salmon_Biomass<-Salmon_Biomass %>%
-  mutate(Weight=case_when(Age==2 ~ 4.086,
+  mutate(Weight=case_when(Age==2 ~ 3.086,
                           Age==3 ~ 6.777,
-                          Age==4 ~ 8.854,
+                          Age==3 ~ 8.853,
                           Age==5 ~ 10.589))
 
 str(Salmon_Biomass)
@@ -292,6 +292,11 @@ Salmon_Biomass$Fishing_Mortality<-Salmon_Biomass$Catch_t_km2/Salmon_Biomass$Biom
 Salmon_Biomass$Fishing_Mortality_NFW<-Salmon_Biomass$Catch_t_km2_NFW/Salmon_Biomass$Biomass_t_km2
 
 Salmon_Biomass$Fishing_Landings<-Salmon_Biomass$Fishing_Mortality_NFW*Salmon_Biomass$Biomass_t_km2
+
+Initial_Biomass<-subset(Salmon_Biomass, Year=="1979")
+
+Salmon_Biomass$RelativeBiomass <- Salmon_Biomass$Biomass_t_km2/ Initial_Biomass$Biomass_t_km2[ match( Salmon_Biomass$FG , Initial_Biomass$FG ) ]
+str(Salmon_Biomass)
 #Salmon_Biomass<-subset(Salmon_Biomass, select=c(Year, FG, Abundance, Biomass_t_km2))
 str(Salmon_Biomass)
 write_csv(Salmon_Biomass,"OUTPUTS/Chinook_Parameters.csv")
@@ -308,18 +313,34 @@ abund<- ggplot(Salmon_Biomass, aes(fill=Age, y=Biomass_t_km2, x=Year)) +
 
 abund
 
-write_csv(Salmon_Biomass,"OUTPUTS/Chinook_Parameters.csv")
+
+
+##Create Age specific relative biomass. 
+
+Initial_Biomass<-subset(Salmon_Biomass, Year=="1979"& Age=="5")
+Salmon_Biomass_5<-subset(Salmon_Biomass, Age=="5")
+Salmon_Biomass_5$RelativeBiomass <- Salmon_Biomass_5$Biomass_t_km2/ Initial_Biomass$Biomass_t_km2[ match( Salmon_Biomass_5$FG , Initial_Biomass$FG ) ]
+write_csv(Salmon_Biomass_5,"OUTPUTS/Salmon_Biomass_5.csv")
+
 
 Initial_Biomass<-subset(Salmon_Biomass, Year=="1979"& Age=="4")
-
 Salmon_Biomass_4<-subset(Salmon_Biomass, Age=="4")
-
-
-str(Initial_Biomass)
-str(Salmon_Biomass_4)
 Salmon_Biomass_4$RelativeBiomass <- Salmon_Biomass_4$Biomass_t_km2/ Initial_Biomass$Biomass_t_km2[ match( Salmon_Biomass_4$FG , Initial_Biomass$FG ) ]
-
 write_csv(Salmon_Biomass_4,"OUTPUTS/Salmon_Biomass_4.csv")
+
+
+Initial_Biomass<-subset(Salmon_Biomass, Year=="1979"& Age=="3")
+Salmon_Biomass_3<-subset(Salmon_Biomass, Age=="3")
+Salmon_Biomass_3$RelativeBiomass <- Salmon_Biomass_3$Biomass_t_km2/ Initial_Biomass$Biomass_t_km2[ match( Salmon_Biomass_3$FG , Initial_Biomass$FG ) ]
+write_csv(Salmon_Biomass_3,"OUTPUTS/Salmon_Biomass_3.csv")
+
+
+Initial_Biomass<-subset(Salmon_Biomass, Year=="1979"& Age=="2")
+Salmon_Biomass_2<-subset(Salmon_Biomass, Age=="2")
+Salmon_Biomass_2$RelativeBiomass <- Salmon_Biomass_2$Biomass_t_km2/ Initial_Biomass$Biomass_t_km2[ match( Salmon_Biomass_2$FG , Initial_Biomass$FG ) ]
+write_csv(Salmon_Biomass_2,"OUTPUTS/Salmon_Biomass_2.csv")
+
+################################################################
 
 
 Salmon_Biomass$Group <- paste(Salmon_Biomass$FG, Salmon_Biomass$Age, sep="_")
